@@ -1,0 +1,6 @@
+numpy == 1.19.2
+protobuf == 3.19.0
+mediapipe == 4.2.0
+pyserial == 3.5
+opencv-python == 4.5.5.64
+PyQt5 == 5.15.6

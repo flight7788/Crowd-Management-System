@@ -1,14 +1,15 @@
 from PyQt5 import QtWidgets, QtGui, QtCore
 from PyQt5.QtCore import Qt
 from WorkWidgets.WidgetComponents import LabelComponent, LineEditComponent, ButtonComponent
-from Camera.Camera import Camera
+from Camera.MyCamera import Camera
+from CardReader.MyCardReader import CardReader
 
 import numpy as np
 import cv2
+import mediapipe as mp
 
 
-face_classifier = cv2.CascadeClassifier(cv2.data.haarcascades + "haarcascade_frontalface_default.xml")
-
+mpFacedetection = mp.solutions.face_detection.FaceDetection()
 
 class CameraWidget(QtWidgets.QWidget):
     def __init__(self):
@@ -16,7 +17,7 @@ class CameraWidget(QtWidgets.QWidget):
         self.setObjectName("camera_widget")
         
         menu_widget = MenuWidget()
-        status_widget = StatusWidget()
+        self.status_widget = StatusWidget()
 
         self.viewData = QtWidgets.QLabel('this is an image', self)
         self.viewData.setGeometry(QtCore.QRect(0, 0, 650, 650))
@@ -30,13 +31,17 @@ class CameraWidget(QtWidgets.QWidget):
 
         layout = QtWidgets.QHBoxLayout()
         layout.addLayout(layout_center, stretch=60)
-        layout.addWidget(status_widget, stretch=40)
+        layout.addWidget(self.status_widget, stretch=40)
         
         layout.setAlignment(Qt.AlignCenter) 
         self.setLayout(layout)
-
+    
+        self.MyReader = CardReader()
+        self.MyReader.uid.connect(self.Reader_callback) 
+        self.MyReader.open('com6', 115200)
+        self.MyReader.start()
+      
         self.detect_face = False
-
         self.ProcessCam = Camera() 
         if self.ProcessCam.connect:
             self.ProcessCam.rawdata.connect(self.showData) 
@@ -45,35 +50,39 @@ class CameraWidget(QtWidgets.QWidget):
     
     def showData(self, img):
         self.Ny, self.Nx, _ = img.shape  
-        img_new = np.zeros_like(img)
-        img_new[...,0] = img[...,2]
-        img_new[...,1] = img[...,1]
-        img_new[...,2] = img[...,0]
-        img = img_new
-
-        img = cv2.resize(img, (640, 480), interpolation=cv2.INTER_CUBIC)
 
         if(self.detect_face):
             img = self.detectFace(img)
 
+        img = cv2.resize(img, (640, 480), interpolation=cv2.INTER_CUBIC)
+        img = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
         qimg = QtGui.QImage(img.data, self.Nx, self.Ny, QtGui.QImage.Format_RGB888)
         self.viewData.setPixmap(QtGui.QPixmap.fromImage(qimg))
 
     def detectFace(self, img):
-        grayImg = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
         color = (0, 255, 0)  
-        faceRects = face_classifier.detectMultiScale(grayImg, scaleFactor=1.2, minNeighbors=3, minSize=(32, 32))
-       
-
-        if len(faceRects):  
-            for faceRect in faceRects: 
-                x, y, w, h = faceRect
-            cv2.rectangle(img, (x, y), (x + h, y + w), color, 2)
+        rgbImg = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
+        res = mpFacedetection.process(rgbImg)
+        if res.detections:
+            for _, dectection in enumerate(res.detections):
+                box = dectection.location_data.relative_bounding_box
+                h, w, c = rgbImg.shape
+                my_box = int(box.xmin * w), int(box.ymin * h), \
+                         int(box.width * w), int(box.height * h) 
+                cv2.rectangle(img, my_box, color, 2)
         return img
 
     def load(self):
         pass
         
+    def Reader_callback(self, data):
+        if(data == '30a3557e'):
+          self.MyReader.device.send_data('Card:PASS\n')
+          self.status_widget.show_pass()
+        else:
+          self.MyReader.device.send_data('Card:FAIL\n')
+          self.status_widget.show_fail()
+    
 
 class MenuWidget(QtWidgets.QWidget):
     def __init__(self):
@@ -109,13 +118,14 @@ class StatusWidget(QtWidgets.QWidget):
         self.Name_val_label = LabelComponent(14, "XX")
 
         Status_label = LabelComponent(14, "Status: ")
-        self.Status_val_label = LabelComponent(45, "PASS")
+        self.Status_val_label = LabelComponent(45, "")
         self.Status_val_label.setGeometry(QtCore.QRect(0, 0, 400, 200))
         self.Status_val_label.setMinimumSize(QtCore.QSize(400, 200))
-        self.Status_val_label.setStyleSheet('background-color:rgb(0,255,0)')
+        self.Status_val_label.setStyleSheet('background-color:rgb(33, 43, 51)')
         self.Status_val_label.setAlignment(Qt.AlignCenter) 
+        self.Status_ShowTime = 0
 
-        self.msg_val_label = LabelComponent(24, "You can enter school now !!")
+        self.msg_val_label = LabelComponent(24, "")
         self.msg_val_label.setGeometry(QtCore.QRect(0, 0, 400, 200))
         self.msg_val_label.setMinimumSize(QtCore.QSize(400, 200))
         self.msg_val_label.setAlignment(Qt.AlignCenter) 
@@ -147,3 +157,24 @@ class StatusWidget(QtWidgets.QWidget):
         current_time = QtCore.QTime.currentTime()
         label_time = current_time.toString('hh:mm:ss')
         self.Time_val_label.setText(label_time)
+        if(self.Status_ShowTime >= 3):
+            self.Reset_status()
+        else:
+            self.Status_ShowTime += 1
+
+    def show_pass(self):
+        self.Status_val_label.setText('PASS')
+        self.Status_val_label.setStyleSheet('background-color:rgb(0,255,0)')
+        self.msg_val_label.setText('You can enter school now !!')
+        self.Status_ShowTime = 0
+
+    def show_fail(self):
+        self.Status_val_label.setText('FAIL')
+        self.Status_val_label.setStyleSheet('background-color:rgb(255,0,0)')
+        self.msg_val_label.setText('Problem occur !!')
+        self.Status_ShowTime = 0
+
+    def Reset_status(self):
+        self.Status_val_label.setText('')
+        self.Status_val_label.setStyleSheet('background-color:rgb(33, 43, 51)')
+        self.msg_val_label.setText('')

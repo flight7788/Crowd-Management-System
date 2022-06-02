@@ -41,3 +41,16 @@ class Camera(QtCore.QThread):
             self.running = False   
             time.sleep(1)
             self.cam.release()      
+
+    def get_list_CAM(self):
+        index = 0
+        arr = []
+        while True:
+            cap = cv2.VideoCapture(index)
+            if not cap.read()[0]:
+                break
+            else:
+                arr.append({'index':index, 'Name':'CAM{}'.format(index)})
+            cap.release()
+            index += 1
+        return arr
