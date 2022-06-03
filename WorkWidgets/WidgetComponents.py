@@ -9,8 +9,6 @@ class LabelComponent(QtWidgets.QLabel):
         self.setFont(QtGui.QFont("微軟正黑體", font_size, QtGui.QFont.Bold))
         self.setText(content)
         self.setStyleSheet("color: rgb(255, 255, 255)")
-        self.setStyleSheet("color: rgb(255, 255, 255)")
-
 
 class LineEditComponent(QtWidgets.QLineEdit):
     def __init__(self, default_content="", length=10, width=200, font_size=16):
@@ -21,7 +19,6 @@ class LineEditComponent(QtWidgets.QLineEdit):
         self.setMaximumWidth(width)
         self.setFont(QtGui.QFont("微軟正黑體", font_size))
         self.setStyleSheet("color: rgb(255, 255, 255)")
-
 
 class ButtonComponent(QtWidgets.QPushButton):
     def __init__(self, text, font_size=16):

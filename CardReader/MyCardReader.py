@@ -19,7 +19,7 @@ class CardReader(QtCore.QThread):
         data = data.split(':')
         if(len(data) >= 2 and data[0] == 'UID'):
           self.uid.emit(data[1])   
-          print(data[1])
+          #print(data[1])
 
   def open(self, port, baud):
     if(self.connect == False):
@@ -70,11 +70,11 @@ class COM:
 
 
 
-
-
-
 if __name__ == '__main__':
   MyCOM = CardReader()
+  for i in MyCOM.device.get_list_port():
+    print(i.name, i.description)
+  '''
   def callback(data):
     if(data == '30a3557e'):
       MyCOM.device.send_data('Card:PASS\n')
@@ -84,5 +84,6 @@ if __name__ == '__main__':
   MyCOM.uid.connect(callback) 
   MyCOM.open('com6', 115200)
   MyCOM.run()
+  '''
   
 

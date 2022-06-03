@@ -15,9 +15,17 @@ class CameraWidget(QtWidgets.QWidget):
     def __init__(self):
         super().__init__()
         self.setObjectName("camera_widget")
-        
+        self.MyReader = None
+        self.detect_face = False
+        self.ProcessCam = None
+        self.selected_COM = None
+        self.selected_CAM = None
+
         menu_widget = MenuWidget()
         self.status_widget = StatusWidget()
+
+        menu_widget.checkIn_button.clicked.connect(self.Manual_enter)
+        menu_widget.checkOut_button.clicked.connect(self.Manual_leave)
 
         self.viewData = QtWidgets.QLabel('this is an image', self)
         self.viewData.setGeometry(QtCore.QRect(0, 0, 650, 650))
@@ -34,19 +42,7 @@ class CameraWidget(QtWidgets.QWidget):
         layout.addWidget(self.status_widget, stretch=40)
         
         layout.setAlignment(Qt.AlignCenter) 
-        self.setLayout(layout)
-    
-        self.MyReader = CardReader()
-        self.MyReader.uid.connect(self.Reader_callback) 
-        self.MyReader.open('com6', 115200)
-        self.MyReader.start()
-      
-        self.detect_face = False
-        self.ProcessCam = Camera() 
-        if self.ProcessCam.connect:
-            self.ProcessCam.rawdata.connect(self.showData) 
-            self.ProcessCam.open()
-            self.ProcessCam.start()
+        self.setLayout(layout)        
     
     def showData(self, img):
         self.Ny, self.Nx, _ = img.shape  
@@ -73,33 +69,45 @@ class CameraWidget(QtWidgets.QWidget):
         return img
 
     def load(self):
-        pass
+        if(self.selected_COM != None):
+            self.MyReader = CardReader()
+            self.MyReader.uid.connect(self.Reader_callback)
+            self.MyReader.open(self.selected_COM, 115200) 
+            self.MyReader.start()
+        if(self.selected_CAM != None):
+            self.ProcessCam = Camera(selected_CAM=self.selected_CAM)
+            self.ProcessCam.rawdata.connect(self.showData) 
+            self.ProcessCam.open()
+            self.ProcessCam.start()
         
     def Reader_callback(self, data):
         if(data == '30a3557e'):
           self.MyReader.device.send_data('Card:PASS\n')
-          self.status_widget.show_pass()
+          self.status_widget.show_pass('Enter')
         else:
           self.MyReader.device.send_data('Card:FAIL\n')
           self.status_widget.show_fail()
     
+    def Manual_enter(self):
+        self.MyReader.device.send_data('Card:PASS\n')
+        self.status_widget.show_pass('Enter')
+    
+    def Manual_leave(self):
+        self.MyReader.device.send_data('Card:PASS\n')
+        self.status_widget.show_pass('Leave')
 
 class MenuWidget(QtWidgets.QWidget):
     def __init__(self):
         super().__init__()
         self.setObjectName("menu_widget")
-        
         layout = QtWidgets.QHBoxLayout()
-        checkIn_button = ButtonComponent("Check In")
-        checkOut_button = ButtonComponent("Check Out")
-        #start_button.clicked.connect()
-        #stop_button.clicked.connect()
-        
-
-        layout.addWidget(checkIn_button, stretch=1)
-        layout.addWidget(checkOut_button, stretch=1)
+        self.checkIn_button = ButtonComponent("Check In")
+        self.checkOut_button = ButtonComponent("Check Out")
+        layout.addWidget(self.checkIn_button, stretch=1)
+        layout.addWidget(self.checkOut_button, stretch=1)
 
         self.setLayout(layout)
+
 
 
 class StatusWidget(QtWidgets.QWidget):
@@ -162,10 +170,13 @@ class StatusWidget(QtWidgets.QWidget):
         else:
             self.Status_ShowTime += 1
 
-    def show_pass(self):
+    def show_pass(self, status):
         self.Status_val_label.setText('PASS')
         self.Status_val_label.setStyleSheet('background-color:rgb(0,255,0)')
-        self.msg_val_label.setText('You can enter school now !!')
+        if(status == 'Enter'):
+            self.msg_val_label.setText('You can enter school now !!')
+        if(status == 'Leave'):
+            self.msg_val_label.setText('You can leave school now !!')
         self.Status_ShowTime = 0
 
     def show_fail(self):
