@@ -20,12 +20,13 @@ class CameraWidget(QtWidgets.QWidget):
         self.ProcessCam = None
         self.selected_COM = None
         self.selected_CAM = None
+        self.current_img = None
 
-        menu_widget = MenuWidget()
+        self.menu_widget = MenuWidget()
         self.status_widget = StatusWidget()
 
-        menu_widget.checkIn_button.clicked.connect(self.Manual_enter)
-        menu_widget.checkOut_button.clicked.connect(self.Manual_leave)
+        self.menu_widget.checkIn_button.clicked.connect(self.manual_enter)
+        self.menu_widget.checkOut_button.clicked.connect(self.manual_leave)
 
         self.viewData = QtWidgets.QLabel('this is an image', self)
         self.viewData.setGeometry(QtCore.QRect(0, 0, 650, 650))
@@ -35,7 +36,7 @@ class CameraWidget(QtWidgets.QWidget):
         
         layout_center = QtWidgets.QVBoxLayout()
         layout_center.addWidget(self.viewData)
-        layout_center.addWidget(menu_widget)
+        layout_center.addWidget(self.menu_widget)
 
         layout = QtWidgets.QHBoxLayout()
         layout.addLayout(layout_center, stretch=60)
@@ -46,12 +47,11 @@ class CameraWidget(QtWidgets.QWidget):
     
     def showData(self, img):
         self.Ny, self.Nx, _ = img.shape  
-
         if(self.detect_face):
             img = self.detectFace(img)
-
         img = cv2.resize(img, (640, 480), interpolation=cv2.INTER_CUBIC)
         img = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
+        self.current_img = img
         qimg = QtGui.QImage(img.data, self.Nx, self.Ny, QtGui.QImage.Format_RGB888)
         self.viewData.setPixmap(QtGui.QPixmap.fromImage(qimg))
 
@@ -71,30 +71,46 @@ class CameraWidget(QtWidgets.QWidget):
     def load(self):
         if(self.selected_COM != None):
             self.MyReader = CardReader()
-            self.MyReader.uid.connect(self.Reader_callback)
+            self.MyReader.uid.connect(self.reader_callback)
             self.MyReader.open(self.selected_COM, 115200) 
             self.MyReader.start()
+            self.menu_widget.checkIn_button.setDisabled(False)
+            self.menu_widget.checkOut_button.setDisabled(False)
+        else:
+            self.menu_widget.checkIn_button.setDisabled(True)
+            self.menu_widget.checkOut_button.setDisabled(True)
+
         if(self.selected_CAM != None):
             self.ProcessCam = Camera(selected_CAM=self.selected_CAM)
             self.ProcessCam.rawdata.connect(self.showData) 
             self.ProcessCam.open()
             self.ProcessCam.start()
         
-    def Reader_callback(self, data):
-        if(data == '30a3557e'):
+    def reader_callback(self, data):
+        if(self.check_with_server(data)):
           self.MyReader.device.send_data('Card:PASS\n')
           self.status_widget.show_pass('Enter')
+          self.send_pass_to_server(data)
         else:
           self.MyReader.device.send_data('Card:FAIL\n')
           self.status_widget.show_fail()
+
+    def check_with_server(self, data):
+        if(data == '30a3557e'):
+            return True
+        return False
+
+    def send_pass_to_server(self, data):
+        pass
     
-    def Manual_enter(self):
+    def manual_enter(self):
         self.MyReader.device.send_data('Card:PASS\n')
         self.status_widget.show_pass('Enter')
     
-    def Manual_leave(self):
+    def manual_leave(self):
         self.MyReader.device.send_data('Card:PASS\n')
         self.status_widget.show_pass('Leave')
+
 
 class MenuWidget(QtWidgets.QWidget):
     def __init__(self):
@@ -107,7 +123,6 @@ class MenuWidget(QtWidgets.QWidget):
         layout.addWidget(self.checkOut_button, stretch=1)
 
         self.setLayout(layout)
-
 
 
 class StatusWidget(QtWidgets.QWidget):

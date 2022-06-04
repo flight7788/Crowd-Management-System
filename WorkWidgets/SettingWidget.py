@@ -84,6 +84,7 @@ class SettingWidget(QtWidgets.QWidget):
         self.COM_list = self.MyReader.device.get_list_port()
         for device in self.COM_list: 
             self.combo_box_selectCOM.addItem(device.description)
+        self.status_label.setText('')
 
     def confirm_event(self):
         status = True
@@ -92,8 +93,12 @@ class SettingWidget(QtWidgets.QWidget):
             self.selected_COM = self.COM_list[self.combo_box_selectCOM.currentIndex()].name
             self.MyReader.open(self.selected_COM, 115200)
         except:
-            print('{} is unable to connect.'.format(self.selected_COM))
-            self.status_label.setText('{} is unable to connect.'.format(self.selected_COM))
+            if self.selected_COM != None:
+                print('{} is unable to connect.'.format(self.selected_COM))
+                self.status_label.setText('{} is unable to connect.'.format(self.selected_COM))
+            else:
+                print('No available CardReader exist !!')
+                self.status_label.setText('No available CardReader exist !!')
             status = False
 
         try:
@@ -102,8 +107,12 @@ class SettingWidget(QtWidgets.QWidget):
             self.ProcessCam = Camera(selected_CAM=self.selected_CAM) 
             self.ProcessCam.open()
         except:
-            print('{} is unable to connect.'.format(self.combo_box_selectCAM.currentData()))
-            self.status_label.setText('{} is unable to connect.'.format(self.combo_box_selectCAM.currentData()))
+            if self.selected_CAM != None:
+                print('{} is unable to connect.'.format(self.combo_box_selectCAM.currentData()))
+                self.status_label.setText('{} is unable to connect.'.format(self.combo_box_selectCAM.currentData()))
+            else:
+                print('No available Camera exist !!')
+                self.status_label.setText('No available Camera exist !!')
             status = False
 
         if(status):
