@@ -3,6 +3,7 @@ from SocketServer import SocketServer
 from Service.QueryStuService import QueryStu
 from Service.QueryCardService import QueryCard
 from Service.SwipeService import Swipe
+from Service.ManualCheckService import ManualCheck
 
 FIRESTORE_KEYCHAIN = "connection_info.json"
 HOST = "140.124.39.131"
@@ -13,7 +14,7 @@ FUNCTION_METHOD = {
       'query_stu' : QueryStu,
       'query_card' :  QueryCard,
       'swipe' : Swipe,
-    # 'delete' : DelStu,
+      'manual_check' : ManualCheck,
     # 'modify' : ModifyStu,
 }
 
