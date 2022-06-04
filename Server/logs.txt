@@ -24,3 +24,11 @@ swipe
 
   The client send data =>{'command': 'swipe', 'parameter': {'card_no': '88888', 'time': '2022/05/02', 'img_binary': '000000000000'}}
   The client received data => {"status": "Success", "data": {"student_name": "\u4f55\u7fca\u5b87", "status": "in"}}
+  
+manual_check
+
+  The client send data =>{'command': 'manual_check', 'parameter': {'student_id': '110368035', 'time': '2022/06/04', 'status': 'in', 'img_binary': '000000000'}}
+  The client received data => {"status": "Success", "data": {"student_name": "\u4f55\u7fca\u5b87"}} 
+  
+  The client send data =>{'command': 'manual_check', 'parameter': {'student_id': '110000000', 'time': '2022/06/04', 'status': 'in', 'img_binary': '000000000'}}
+  The client received data => {"status": "Fail", "reason": "student_id is not found"}
