@@ -19,8 +19,7 @@ class SocketClient:
         print('     The client received data => ', raw_data)
 
         if raw_data == "closing":
-            return False
-        
+            return False  
         return json.loads(raw_data)
 
 if __name__ == '__main__':

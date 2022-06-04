@@ -19,8 +19,12 @@ command :
 
  {command: swipe}, parameter: {card_no , time , img_binary}
  
- return student_name, status(in/out)  
+ return status:{OK/Fail}, data: {student_name, status(in/out) } 
 
- {command: query }, parameter: {student_id}
+ {command: query_stu }, parameter: {student_id}
  
- return status, img_binary, student_name , card_no , swipe_time
+ return status:{OK/Fail}, data: {status, student_name , card_no , swipe_time}
+
+{command: query_card }, parameter: {card_no}
+ 
+return status:{OK/Fail}, data: { is_school_member(True/False) }

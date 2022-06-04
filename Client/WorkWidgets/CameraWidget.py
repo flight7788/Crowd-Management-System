@@ -1,5 +1,6 @@
 from PyQt5 import QtWidgets, QtGui, QtCore
 from PyQt5.QtCore import Qt
+from matplotlib.pyplot import text
 from WorkWidgets.WidgetComponents import LabelComponent, LineEditComponent, ButtonComponent
 from Camera.MyCamera import Camera
 from CardReader.MyCardReader import CardReader
@@ -72,19 +73,26 @@ class CameraWidget(QtWidgets.QWidget):
     def readerCallback(self, data):
         if(self.checkWithServer(data)):
           self.MyReader.device.send_data('Card:PASS\n')
-          self.status_widget.showPass('Enter')
-          self.sendPassToServer(data)
+          status = self.sendPassToServer(data)
+          self.status_widget.showPass('Enter' if status=='in' else 'Leave')
         else:
           self.MyReader.device.send_data('Card:FAIL\n')
           self.status_widget.showFail()
 
     def checkWithServer(self, data):
-        if(data == '30a3557e'):
-            return True
-        return False
+        self.my_setting['Server'].send_command('query_card', {'card_no':data})
+        #recv_data = self.my_setting['Server'].wait_response()
+        #return recv_data['is_school_member']
+        return True
 
     def sendPassToServer(self, data):
-        pass
+        self.my_setting['Server'].send_command('swipe', {   'card_no': data, \
+                                                            'time': self.status_widget.Time_val_label.text(),  \
+                                                            'img_binary': ' '})
+        #recv_data = self.my_setting['Server'].wait_response()
+        #self.status_widget.Name_val_label.setText(recv_data['student_name'])
+        #return recv_data['status']
+        return 'in'
     
     def manualEnter(self):
         self.MyReader.device.send_data('Card:PASS\n')
