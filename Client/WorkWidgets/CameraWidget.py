@@ -18,7 +18,9 @@ class CameraWidget(QtWidgets.QWidget):
         self.setObjectName("camera_widget")
         self.MyReader = None
         self.ProcessCam = None
+        self.SocketClient = None
         self.detect_face = False
+        self.face_exist = False
         self.current_img = None
         self.my_setting = {}
         self.menu_widget = MenuWidget()
@@ -51,49 +53,60 @@ class CameraWidget(QtWidgets.QWidget):
     def showData(self, img):
         self.Ny, self.Nx, _ = img.shape  
         if(self.detect_face):
-            img = self.detectFace(img)
+            img, self.face_exist = self.detectFace(img)
         img = cv2.resize(img, (640, 480), interpolation=cv2.INTER_CUBIC)
-        img = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
         self.current_img = img
+        img = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
         qimg = QtGui.QImage(img.data, self.Nx, self.Ny, QtGui.QImage.Format_RGB888)
         self.viewData.setPixmap(QtGui.QPixmap.fromImage(qimg))
+
+    def encodeImg(self, img):
+        img_encode = cv2.imencode('.png', img)[1]
+        data_encode = np.array(img_encode)
+        data_encode = data_encode.tolist()
+        return data_encode
 
     def detectFace(self, img):
         color = (0, 255, 0)  
         rgbImg = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
         res = mpFacedetection.process(rgbImg)
+        exist = False
         if res.detections:
+            exist = True
             for _, dectection in enumerate(res.detections):
                 box = dectection.location_data.relative_bounding_box
                 h, w, c = rgbImg.shape
                 my_box = int(box.xmin * w), int(box.ymin * h), \
                          int(box.width * w), int(box.height * h) 
                 cv2.rectangle(img, my_box, color, 2)
-        return img
+        return img, exist
         
     def readerCallback(self, data):
-        if self.my_setting['Server'] != None and self.checkWithServer(data):
-          self.MyReader.device.send_data('Card:PASS\n')
-          status = self.sendPassToServer(data)
-          if status != 'Fail':
-            self.status_widget.showPass('Enter' if status=='in' else 'Leave')
+        if self.SocketClient != None and self.checkWithServer(data) and self.face_exist:
+            status = self.sendPassToServer(data, self.encodeImg(self.current_img))
+            if status != False:
+                self.status_widget.showPass('Enter' if status=='in' else 'Leave')
+                self.MyReader.device.send_data('Card:PASS\n')
+            else:
+                self.status_widget.showFail()
+                self.MyReader.device.send_data('Card:FAIL\n')
         else:
           self.MyReader.device.send_data('Card:FAIL\n')
           self.status_widget.showFail()
 
     def checkWithServer(self, data):
-        self.my_setting['Server'].send_command('query_card', {'card_no':data})
-        recv_data = self.my_setting['Server'].wait_response()
+        self.SocketClient.send_command('query_card', {'card_no':data})
+        recv_data = self.SocketClient.wait_response()
         if recv_data['status'] != 'OK':
             print('query_card:{}'.format(recv_data['status']))
             return False
         return recv_data['data']['is_school_member']
         
-    def sendPassToServer(self, data):
-        self.my_setting['Server'].send_command('swipe', {   'card_no': data, \
-                                                            'time': self.status_widget.Time_val_label.text(),  \
-                                                            'img_binary': ' '})
-        recv_data = self.my_setting['Server'].wait_response()
+    def sendPassToServer(self, data, imgEncode=''):
+        self.SocketClient.send_command('swipe', {   'card_no': data, \
+                                                    'time': self.status_widget.Time_val_label.text(),  \
+                                                    'img_binary': imgEncode})
+        recv_data = self.SocketClient.wait_response()
         if recv_data['status'] != 'OK':
             print('swipe:{}'.format(recv_data['status']))
             return False
@@ -106,14 +119,14 @@ class CameraWidget(QtWidgets.QWidget):
         self.menu_widget.checkOut_button.setDisabled(False)
 
     def manualEnter(self):
-        if self.my_setting['Server'] != None and self.MyReader != None:
-            if self.menu_widget.stu_ID_lineEdit.text() != '':
-                self.my_setting['Server'].send_command('manual_check', \
+        if self.SocketClient != None and self.MyReader != None:
+            if self.menu_widget.stu_ID_lineEdit.text() != '' and self.face_exist:
+                self.SocketClient.send_command('manual_check', \
                     {   'student_id': self.menu_widget.stu_ID_lineEdit.text(), \
                         'time': self.status_widget.Time_val_label.text(),  \
-                        'img_binary': ' ', \
+                        'img_binary': self.encodeImg(self.current_img), \
                         'status': 'in'})                                              
-                recv_data = self.my_setting['Server'].wait_response()
+                recv_data = self.SocketClient.wait_response()
                 if recv_data['status'] == 'OK':
                     self.MyReader.device.send_data('Card:PASS\n')
                     self.status_widget.showPass('Enter')
@@ -128,17 +141,16 @@ class CameraWidget(QtWidgets.QWidget):
         self.menu_widget.checkIn_button.setDisabled(True)
         self.menu_widget.checkOut_button.setDisabled(True)
         self.menu_widget.stu_ID_lineEdit.setText('')
-        
-    
+          
     def manualLeave(self):
-        if self.my_setting['Server'] != None and self.MyReader != None:
-            if self.menu_widget.stu_ID_lineEdit.text() != '':
-                self.my_setting['Server'].send_command('manual_check', \
+        if self.SocketClient != None and self.MyReader != None:
+            if self.menu_widget.stu_ID_lineEdit.text() != '' and self.face_exist:
+                self.SocketClient.send_command('manual_check', \
                     {   'student_id': self.menu_widget.stu_ID_lineEdit.text(), \
                         'time': self.status_widget.Time_val_label.text(),  \
-                        'img_binary': ' ', \
+                        'img_binary': self.encodeImg(self.current_img), \
                         'status': 'out'})                                              
-                recv_data = self.my_setting['Server'].wait_response()
+                recv_data = self.SocketClient.wait_response()
                 if recv_data['status'] == 'OK':
                     self.MyReader.device.send_data('Card:PASS\n')
                     self.status_widget.showPass('Leave')
@@ -155,7 +167,7 @@ class CameraWidget(QtWidgets.QWidget):
         self.menu_widget.stu_ID_lineEdit.setText('')
     
     def load(self):
-        if(self.my_setting['COM'] != None):
+        if self.my_setting['COM'] != None:
             self.MyReader = CardReader()
             self.MyReader.uid.connect(self.readerCallback)
             self.MyReader.open(self.my_setting['COM'], 115200) 
@@ -166,11 +178,14 @@ class CameraWidget(QtWidgets.QWidget):
             self.menu_widget.checkIn_button.setDisabled(True)
             self.menu_widget.checkOut_button.setDisabled(True)
 
-        if(self.my_setting['CAM'] != None):
+        if self.my_setting['CAM'] != None:
             self.ProcessCam = Camera(selected_CAM=self.my_setting['CAM'])
             self.ProcessCam.rawdata.connect(self.showData) 
             self.ProcessCam.open()
             self.ProcessCam.start()
+
+        if self.my_setting['Server'] != None:
+            self.SocketClient = self.my_setting['Server']
 
         self.menu_widget.checkIn_button.setDisabled(True)
         self.menu_widget.checkOut_button.setDisabled(True)
@@ -180,6 +195,8 @@ class CameraWidget(QtWidgets.QWidget):
             self.MyReader.close()
         if(self.ProcessCam != None and self.ProcessCam.connect):
             self.ProcessCam.close()
+        if(self.SocketClient != None):
+            self.SocketClient.client_socket.close()
 
 
 class MenuWidget(QtWidgets.QWidget):
@@ -187,9 +204,9 @@ class MenuWidget(QtWidgets.QWidget):
         super().__init__()
         self.setObjectName("menu_widget")
         main_layout = QtWidgets.QVBoxLayout()
-        layout = QtWidgets.QHBoxLayout()
         stu_ID_label = LabelComponent(16, 'Your ID:')
         self.stu_ID_lineEdit = LineEditComponent('', length=15)
+        layout = QtWidgets.QHBoxLayout()
         layout.addWidget(stu_ID_label, stretch=1, alignment=Qt.AlignRight)
         layout.addWidget(self.stu_ID_lineEdit, stretch=1, alignment=Qt.AlignLeft)
         main_layout.addLayout(layout, stretch=1)

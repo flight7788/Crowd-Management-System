@@ -198,7 +198,6 @@ class SettingWidget(QtWidgets.QWidget):
             self.MyReader.close()
         if(self.ProcessCam != None and self.ProcessCam.connect):
             self.ProcessCam.close()
-
  
 class IPWidget(QtWidgets.QWidget):
     def __init__(self):

@@ -11,13 +11,12 @@ class SocketClient:
     def send_command(self, command, parameters={}):
         send_data = {'command': command, "parameters": parameters}
         self.client_socket.send(json.dumps(send_data).encode())
-        print('     The client sent data => ', send_data)
+        #print('     The client sent data => ', send_data)
 
     def wait_response(self):
         data = self.client_socket.recv(BUFFER_SIZE)
         raw_data = data.decode()
-        print('     The client received data => ', raw_data)
-
+        #print('     The client received data => ', raw_data)
         if raw_data == "closing":
             return False  
         return json.loads(raw_data)
