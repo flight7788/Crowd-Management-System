@@ -19,7 +19,6 @@ class CardReader(QtCore.QThread):
         data = data.split(':')
         if(len(data) >= 2 and data[0] == 'UID'):
           self.uid.emit(data[1])   
-          #print(data[1])
 
   def open(self, port, baud):
     if(self.connect == False):

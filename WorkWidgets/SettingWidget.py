@@ -14,7 +14,7 @@ class SettingWidget(QtWidgets.QWidget):
         header_label.setStyleSheet("border: 5px solid rgb(255, 255, 255); color: rgb(255, 255, 255)")
 
         self.refresh_button = ButtonComponent("Refresh")
-        self.refresh_button.clicked.connect(self.update_combo_box)
+        self.refresh_button.clicked.connect(self.updateComboBox)
 
         self.status_label = LabelComponent(24, "")
         self.status_label.setAlignment(Qt.AlignCenter)
@@ -35,7 +35,7 @@ class SettingWidget(QtWidgets.QWidget):
                                     border: 1px solid rgb(255, 255, 255)")
     
         self.confirm_button = ButtonComponent("Confirm")
-        self.confirm_button.clicked.connect(self.confirm_event)
+        self.confirm_button.clicked.connect(self.confirmEvent)
        
         main_layout = QtWidgets.QGridLayout()
         main_layout.addWidget(header_label, 0, 0, 1, 3)
@@ -74,7 +74,7 @@ class SettingWidget(QtWidgets.QWidget):
         self.selected_COM = None
         self.selected_CAM = None
 
-    def update_combo_box(self):
+    def updateComboBox(self):
         self.combo_box_selectCAM.clear()
         self.CAM_list = self.ProcessCam.get_list_CAM()
         for device in self.CAM_list:
@@ -86,7 +86,7 @@ class SettingWidget(QtWidgets.QWidget):
             self.combo_box_selectCOM.addItem(device.description)
         self.status_label.setText('')
 
-    def confirm_event(self):
+    def confirmEvent(self):
         status = True
         try:
             self.MyReader = CardReader()
@@ -116,11 +116,23 @@ class SettingWidget(QtWidgets.QWidget):
             status = False
 
         if(status):
-            self.status_label.setText('New setting is Sucess')
+            self.status_label.setText('New setting is sucess !!')
+
+    def getNewSetting(self):
+        my_setting = {
+            "COM": self.selected_COM,
+            "CAM": self.selected_CAM
+        }
+        return my_setting
 
     def load(self):
-        self.update_combo_box()
+        self.updateComboBox()
         self.status_label.setText('')
        
+    def disconnectAll(self):
+        if(self.MyReader != None and self.MyReader.connect):
+            self.MyReader.close()
+        if(self.ProcessCam != None and self.ProcessCam.connect):
+            self.ProcessCam.close()
 
    

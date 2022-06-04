@@ -45,7 +45,7 @@ class MenuWidget(QtWidgets.QWidget):
         self.currentLog_button.setIcon(QtGui.QIcon('./icon/server.png'))
         self.currentLog_button.setIconSize(QtCore.QSize(50,50))
 
-        self.setting_button.clicked.connect(self.setting_button_callback)
+        self.setting_button.clicked.connect(self.settingButtonCallback)
         #stop_button.clicked.connect()
 
         layout.addWidget(self.setting_button, stretch=1)
@@ -53,32 +53,22 @@ class MenuWidget(QtWidgets.QWidget):
 
         self.setLayout(layout)
 
-    def setting_button_callback(self):
+    def settingButtonCallback(self):
         if(self.setting_button.text() == ' Setting'):
             self.setting_button.setText(' Return')
             self.setting_button.setIcon(QtGui.QIcon('./icon/return.png'))
             self.setting_button.setIconSize(QtCore.QSize(50,50))
             self.currentLog_button.setDisabled(True)
-            if(self.func_widget.widget_dict['camera'].MyReader != None and 
-                self.func_widget.widget_dict['camera'].MyReader.connect):
-                self.func_widget.widget_dict['camera'].MyReader.close()
-            if(self.func_widget.widget_dict['camera'].ProcessCam != None and 
-                self.func_widget.widget_dict['camera'].ProcessCam.connect):
-                self.func_widget.widget_dict['camera'].ProcessCam.close()
-            self.func_widget.update_widget('setting')
+            self.func_widget.widget_dict['camera'].disconnectAll()
+            self.func_widget.updateWidget('setting')
         else:
             self.setting_button.setText(' Setting')
             self.setting_button.setIcon(QtGui.QIcon('./icon/setting.png'))
             self.setting_button.setIconSize(QtCore.QSize(50,50))
             self.currentLog_button.setDisabled(False)
-            if(self.func_widget.widget_dict['setting'].MyReader.connect):
-                self.func_widget.widget_dict['setting'].MyReader.close()
-            if(self.func_widget.widget_dict['setting'].ProcessCam.connect):
-                self.func_widget.widget_dict['setting'].ProcessCam.close()
-            self.func_widget.widget_dict['camera'].selected_COM = self.func_widget.widget_dict['setting'].selected_COM
-            self.func_widget.widget_dict['camera'].selected_CAM = self.func_widget.widget_dict['setting'].selected_CAM  
-            self.func_widget.update_widget('camera')
-
+            self.func_widget.widget_dict['setting'].disconnectAll()
+            self.func_widget.widget_dict['camera'].setNewSetting(self.func_widget.widget_dict['setting'].getNewSetting())
+            self.func_widget.updateWidget('camera')
 
 
 class FunctionWidget(QtWidgets.QStackedWidget):
@@ -88,9 +78,9 @@ class FunctionWidget(QtWidgets.QStackedWidget):
         self.widget_layer_dict = {}
         for name, widget in MyWidget.items():
             self.widget_layer_dict[name] = self.addWidget(widget)
-        self.update_widget('setting')
+        self.updateWidget('setting')
     
-    def update_widget(self, name):
+    def updateWidget(self, name):
         self.setCurrentIndex(self.widget_layer_dict[name])
         current_widget = self.currentWidget()
         current_widget.load()

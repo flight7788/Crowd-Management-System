@@ -16,17 +16,15 @@ class CameraWidget(QtWidgets.QWidget):
         super().__init__()
         self.setObjectName("camera_widget")
         self.MyReader = None
-        self.detect_face = False
         self.ProcessCam = None
-        self.selected_COM = None
-        self.selected_CAM = None
+        self.detect_face = False
         self.current_img = None
-
+        self.my_setting = {}
         self.menu_widget = MenuWidget()
         self.status_widget = StatusWidget()
 
-        self.menu_widget.checkIn_button.clicked.connect(self.manual_enter)
-        self.menu_widget.checkOut_button.clicked.connect(self.manual_leave)
+        self.menu_widget.checkIn_button.clicked.connect(self.manualEnter)
+        self.menu_widget.checkOut_button.clicked.connect(self.manualLeave)
 
         self.viewData = QtWidgets.QLabel('this is an image', self)
         self.viewData.setGeometry(QtCore.QRect(0, 0, 650, 650))
@@ -45,6 +43,9 @@ class CameraWidget(QtWidgets.QWidget):
         layout.setAlignment(Qt.AlignCenter) 
         self.setLayout(layout)        
     
+    def setNewSetting(self, new_setting: dict):
+        self.my_setting = new_setting
+
     def showData(self, img):
         self.Ny, self.Nx, _ = img.shape  
         if(self.detect_face):
@@ -67,12 +68,37 @@ class CameraWidget(QtWidgets.QWidget):
                          int(box.width * w), int(box.height * h) 
                 cv2.rectangle(img, my_box, color, 2)
         return img
+        
+    def readerCallback(self, data):
+        if(self.checkWithServer(data)):
+          self.MyReader.device.send_data('Card:PASS\n')
+          self.status_widget.showPass('Enter')
+          self.sendPassToServer(data)
+        else:
+          self.MyReader.device.send_data('Card:FAIL\n')
+          self.status_widget.showFail()
 
+    def checkWithServer(self, data):
+        if(data == '30a3557e'):
+            return True
+        return False
+
+    def sendPassToServer(self, data):
+        pass
+    
+    def manualEnter(self):
+        self.MyReader.device.send_data('Card:PASS\n')
+        self.status_widget.showPass('Enter')
+    
+    def manualLeave(self):
+        self.MyReader.device.send_data('Card:PASS\n')
+        self.status_widget.showPass('Leave')
+    
     def load(self):
-        if(self.selected_COM != None):
+        if(self.my_setting['COM'] != None):
             self.MyReader = CardReader()
-            self.MyReader.uid.connect(self.reader_callback)
-            self.MyReader.open(self.selected_COM, 115200) 
+            self.MyReader.uid.connect(self.readerCallback)
+            self.MyReader.open(self.my_setting['COM'], 115200) 
             self.MyReader.start()
             self.menu_widget.checkIn_button.setDisabled(False)
             self.menu_widget.checkOut_button.setDisabled(False)
@@ -80,36 +106,17 @@ class CameraWidget(QtWidgets.QWidget):
             self.menu_widget.checkIn_button.setDisabled(True)
             self.menu_widget.checkOut_button.setDisabled(True)
 
-        if(self.selected_CAM != None):
-            self.ProcessCam = Camera(selected_CAM=self.selected_CAM)
+        if(self.my_setting['CAM'] != None):
+            self.ProcessCam = Camera(selected_CAM=self.my_setting['CAM'])
             self.ProcessCam.rawdata.connect(self.showData) 
             self.ProcessCam.open()
             self.ProcessCam.start()
-        
-    def reader_callback(self, data):
-        if(self.check_with_server(data)):
-          self.MyReader.device.send_data('Card:PASS\n')
-          self.status_widget.show_pass('Enter')
-          self.send_pass_to_server(data)
-        else:
-          self.MyReader.device.send_data('Card:FAIL\n')
-          self.status_widget.show_fail()
-
-    def check_with_server(self, data):
-        if(data == '30a3557e'):
-            return True
-        return False
-
-    def send_pass_to_server(self, data):
-        pass
     
-    def manual_enter(self):
-        self.MyReader.device.send_data('Card:PASS\n')
-        self.status_widget.show_pass('Enter')
-    
-    def manual_leave(self):
-        self.MyReader.device.send_data('Card:PASS\n')
-        self.status_widget.show_pass('Leave')
+    def disconnectAll(self):
+        if(self.MyReader != None and self.MyReader.connect):
+            self.MyReader.close()
+        if(self.ProcessCam != None and self.ProcessCam.connect):
+            self.ProcessCam.close()
 
 
 class MenuWidget(QtWidgets.QWidget):
@@ -181,11 +188,11 @@ class StatusWidget(QtWidgets.QWidget):
         label_time = current_time.toString('hh:mm:ss')
         self.Time_val_label.setText(label_time)
         if(self.Status_ShowTime >= 3):
-            self.Reset_status()
+            self.resetStatus()
         else:
             self.Status_ShowTime += 1
 
-    def show_pass(self, status):
+    def showPass(self, status):
         self.Status_val_label.setText('PASS')
         self.Status_val_label.setStyleSheet('background-color:rgb(0,255,0)')
         if(status == 'Enter'):
@@ -194,13 +201,13 @@ class StatusWidget(QtWidgets.QWidget):
             self.msg_val_label.setText('You can leave school now !!')
         self.Status_ShowTime = 0
 
-    def show_fail(self):
+    def showFail(self):
         self.Status_val_label.setText('FAIL')
         self.Status_val_label.setStyleSheet('background-color:rgb(255,0,0)')
         self.msg_val_label.setText('Problem occur !!')
         self.Status_ShowTime = 0
 
-    def Reset_status(self):
+    def resetStatus(self):
         self.Status_val_label.setText('')
         self.Status_val_label.setStyleSheet('background-color:rgb(33, 43, 51)')
         self.msg_val_label.setText('')
