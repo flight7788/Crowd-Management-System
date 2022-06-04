@@ -24,6 +24,7 @@ class CameraWidget(QtWidgets.QWidget):
         self.menu_widget = MenuWidget()
         self.status_widget = StatusWidget()
 
+        self.menu_widget.stu_ID_lineEdit.mousePressEvent = self.stuID_lineEdit_Event
         self.menu_widget.checkIn_button.clicked.connect(self.manualEnter)
         self.menu_widget.checkOut_button.clicked.connect(self.manualLeave)
 
@@ -71,36 +72,87 @@ class CameraWidget(QtWidgets.QWidget):
         return img
         
     def readerCallback(self, data):
-        if(self.checkWithServer(data)):
+        if self.my_setting['Server'] != None and self.checkWithServer(data):
           self.MyReader.device.send_data('Card:PASS\n')
           status = self.sendPassToServer(data)
-          self.status_widget.showPass('Enter' if status=='in' else 'Leave')
+          if status != 'Fail':
+            self.status_widget.showPass('Enter' if status=='in' else 'Leave')
         else:
           self.MyReader.device.send_data('Card:FAIL\n')
           self.status_widget.showFail()
 
     def checkWithServer(self, data):
         self.my_setting['Server'].send_command('query_card', {'card_no':data})
-        #recv_data = self.my_setting['Server'].wait_response()
-        #return recv_data['is_school_member']
-        return True
-
+        recv_data = self.my_setting['Server'].wait_response()
+        if recv_data['status'] != 'OK':
+            print('query_card:{}'.format(recv_data['status']))
+            return False
+        return recv_data['data']['is_school_member']
+        
     def sendPassToServer(self, data):
         self.my_setting['Server'].send_command('swipe', {   'card_no': data, \
                                                             'time': self.status_widget.Time_val_label.text(),  \
                                                             'img_binary': ' '})
-        #recv_data = self.my_setting['Server'].wait_response()
-        #self.status_widget.Name_val_label.setText(recv_data['student_name'])
-        #return recv_data['status']
-        return 'in'
+        recv_data = self.my_setting['Server'].wait_response()
+        if recv_data['status'] != 'OK':
+            print('swipe:{}'.format(recv_data['status']))
+            return False
+        self.status_widget.Name_val_label.setText(recv_data['data']['student_name'])
+        self.status_widget.ID_val_label.setText(recv_data['data']['student_id'])
+        return recv_data['data']['status']
     
+    def stuID_lineEdit_Event(self, event):
+        self.menu_widget.checkIn_button.setDisabled(False)
+        self.menu_widget.checkOut_button.setDisabled(False)
+
     def manualEnter(self):
-        self.MyReader.device.send_data('Card:PASS\n')
-        self.status_widget.showPass('Enter')
+        if self.my_setting['Server'] != None and self.MyReader != None:
+            if self.menu_widget.stu_ID_lineEdit.text() != '':
+                self.my_setting['Server'].send_command('manual_check', \
+                    {   'student_id': self.menu_widget.stu_ID_lineEdit.text(), \
+                        'time': self.status_widget.Time_val_label.text(),  \
+                        'img_binary': ' ', \
+                        'status': 'in'})                                              
+                recv_data = self.my_setting['Server'].wait_response()
+                if recv_data['status'] == 'OK':
+                    self.MyReader.device.send_data('Card:PASS\n')
+                    self.status_widget.showPass('Enter')
+                    self.status_widget.Name_val_label.setText(recv_data['data']['student_name'])
+                    self.status_widget.ID_val_label.setText(self.menu_widget.stu_ID_lineEdit.text())
+                else:
+                    self.MyReader.device.send_data('Card:FAIL\n')
+                    self.status_widget.showFail()
+            else:
+                self.MyReader.device.send_data('Card:FAIL\n')
+                self.status_widget.showFail()
+        self.menu_widget.checkIn_button.setDisabled(True)
+        self.menu_widget.checkOut_button.setDisabled(True)
+        self.menu_widget.stu_ID_lineEdit.setText('')
+        
     
     def manualLeave(self):
-        self.MyReader.device.send_data('Card:PASS\n')
-        self.status_widget.showPass('Leave')
+        if self.my_setting['Server'] != None and self.MyReader != None:
+            if self.menu_widget.stu_ID_lineEdit.text() != '':
+                self.my_setting['Server'].send_command('manual_check', \
+                    {   'student_id': self.menu_widget.stu_ID_lineEdit.text(), \
+                        'time': self.status_widget.Time_val_label.text(),  \
+                        'img_binary': ' ', \
+                        'status': 'out'})                                              
+                recv_data = self.my_setting['Server'].wait_response()
+                if recv_data['status'] == 'OK':
+                    self.MyReader.device.send_data('Card:PASS\n')
+                    self.status_widget.showPass('Leave')
+                    self.status_widget.Name_val_label.setText(recv_data['data']['student_name'])
+                    self.status_widget.ID_val_label.setText(self.menu_widget.stu_ID_lineEdit.text())
+                else:
+                    self.MyReader.device.send_data('Card:FAIL\n')
+                    self.status_widget.showFail()
+            else:
+                self.MyReader.device.send_data('Card:FAIL\n')
+                self.status_widget.showFail()
+        self.menu_widget.checkIn_button.setDisabled(True)
+        self.menu_widget.checkOut_button.setDisabled(True)
+        self.menu_widget.stu_ID_lineEdit.setText('')
     
     def load(self):
         if(self.my_setting['COM'] != None):
@@ -119,6 +171,9 @@ class CameraWidget(QtWidgets.QWidget):
             self.ProcessCam.rawdata.connect(self.showData) 
             self.ProcessCam.open()
             self.ProcessCam.start()
+
+        self.menu_widget.checkIn_button.setDisabled(True)
+        self.menu_widget.checkOut_button.setDisabled(True)
     
     def disconnectAll(self):
         if(self.MyReader != None and self.MyReader.connect):
@@ -131,13 +186,22 @@ class MenuWidget(QtWidgets.QWidget):
     def __init__(self):
         super().__init__()
         self.setObjectName("menu_widget")
+        main_layout = QtWidgets.QVBoxLayout()
+        layout = QtWidgets.QHBoxLayout()
+        stu_ID_label = LabelComponent(16, 'Your ID:')
+        self.stu_ID_lineEdit = LineEditComponent('', length=15)
+        layout.addWidget(stu_ID_label, stretch=1, alignment=Qt.AlignRight)
+        layout.addWidget(self.stu_ID_lineEdit, stretch=1, alignment=Qt.AlignLeft)
+        main_layout.addLayout(layout, stretch=1)
         layout = QtWidgets.QHBoxLayout()
         self.checkIn_button = ButtonComponent("Check In")
         self.checkOut_button = ButtonComponent("Check Out")
+        self.checkIn_button.setDisabled(True)
+        self.checkOut_button.setDisabled(True)
         layout.addWidget(self.checkIn_button, stretch=1)
         layout.addWidget(self.checkOut_button, stretch=1)
-
-        self.setLayout(layout)
+        main_layout.addLayout(layout, stretch=1)
+        self.setLayout(main_layout)
 
 
 class StatusWidget(QtWidgets.QWidget):
@@ -153,7 +217,10 @@ class StatusWidget(QtWidgets.QWidget):
         self.Time_val_label = LabelComponent(14, "")
 
         Name_label = LabelComponent(14, "Name: ")
-        self.Name_val_label = LabelComponent(14, "XX")
+        self.Name_val_label = LabelComponent(14, "")
+
+        ID_label = LabelComponent(14, "ID: ")
+        self.ID_val_label = LabelComponent(14, "")
 
         Status_label = LabelComponent(14, "Status: ")
         self.Status_val_label = LabelComponent(45, "")
@@ -174,10 +241,12 @@ class StatusWidget(QtWidgets.QWidget):
         layout.addWidget(Time_label, 1, 0, 1, 1)   
         layout.addWidget(self.Time_val_label, 1, 1, 1, 2)       
         layout.addWidget(Name_label, 2, 0, 1, 1)   
-        layout.addWidget(self.Name_val_label, 2, 1, 1, 2)       
-        layout.addWidget(Status_label, 3, 0, 1, 2)   
-        layout.addWidget(self.Status_val_label, 4, 0, 1, 4)     
-        layout.addWidget(self.msg_val_label, 5, 0, 1, 4)       
+        layout.addWidget(self.Name_val_label, 2, 1, 1, 2)    
+        layout.addWidget(ID_label, 3, 0, 1, 1)   
+        layout.addWidget(self.ID_val_label, 3, 1, 1, 2)       
+        layout.addWidget(Status_label, 4, 0, 1, 2)   
+        layout.addWidget(self.Status_val_label, 5, 0, 1, 4)     
+        layout.addWidget(self.msg_val_label, 6, 0, 1, 4)       
         layout.setAlignment(Qt.AlignLeft|Qt.AlignTop)     
         layout.setVerticalSpacing(20)
 
@@ -213,9 +282,13 @@ class StatusWidget(QtWidgets.QWidget):
         self.Status_val_label.setText('FAIL')
         self.Status_val_label.setStyleSheet('background-color:rgb(255,0,0)')
         self.msg_val_label.setText('Problem occur !!')
+        self.Name_val_label.setText('')
+        self.ID_val_label.setText('')
         self.Status_ShowTime = 0
 
     def resetStatus(self):
         self.Status_val_label.setText('')
         self.Status_val_label.setStyleSheet('background-color:rgb(33, 43, 51)')
         self.msg_val_label.setText('')
+        self.Name_val_label.setText('')
+        self.ID_val_label.setText('')
