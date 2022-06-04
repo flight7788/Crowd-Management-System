@@ -1,0 +1,26 @@
+query_stu
+
+  The client send data =>{'command': 'query_stu', 'parameter': {'student_id': '110368035'}}
+  The client received data => {"status": "Success", "data": {"1": {"img_binary": "", "client_no": "1", "status": "in", "swipe_datetime": "2022/05/01", "card_no": "88888"}, "10": {"client_no": "", "swipe_time": "2022/05/02", "status": "in", "img_binary": "000000000000", "card_no": "88888"}, "11": {"img_binary": "000000000000", "swipe_time": "2022/05/02", "client_no": "", "status": "out", "card_no": "88888"}, "12": {"client_no": "", "swipe_time": "2022/05/02", "status": "in", "card_no": "88888", "img_binary": "000000000000"}, "13": {"swipe_time": "2022/05/02", "status": "out", "card_no": "88888", "img_binary": "000000000000", "client_no": ""}, "14": {"swipe_time": "2022/05/02", "img_binary": "000000000000", "status": "in", "card_no": "88888", "client_no": ""}, "2": {"swipe_time": "2022/01/01", "status": "out", "card_no": "88888", "img_binary": "", "client_no": "0"}, "3": {"status": "in", "img_binary": "000000000000", "card_no": "88888", "client_no": "", "swipe_time": "2022/05/02"}, "4": {"client_no": "", "swipe_time": "2022/05/02", "status": "in", "img_binary": "000000000000", "card_no": "88888"}, "5": {"img_binary": "000000000000", "swipe_time": "2022/05/02", "status": "in", "client_no": "", "card_no": "88888"}, "6": {"swipe_time": "2022/05/02", "status": "in", "img_binary": "000000000000", "card_no": "88888", "client_no": ""}, "7": {"status": "in", "img_binary": "000000000000", "card_no": "88888", "client_no": "", "swipe_time": "2022/05/02"}, "8": {"card_no": "88888", "img_binary": "000000000000", "client_no": "", "swipe_time": "2022/05/02", "status": "in"}, "9": {"swipe_time": "2022/05/02", "status": "in", "card_no": "88888", "img_binary": "000000000000", "client_no": ""}}}
+
+
+  The client send data =>{'command': 'query_stu', 'parameter': {'student_id': '110000000'}}
+  The client received data => {"status": "Fail"}
+  
+query_card
+  The client send data =>{'command': 'query_card', 'parameter': {'card_no': '88888'}}
+  The client received data => {"status": "Success", "data": {"is_school_member": true}}
+
+  The client send data =>{'command': 'query_card', 'parameter': {'card_no': '99999'}}
+  The client received data => {"status": "Fail"}
+
+swipe
+
+  The client send data =>{'command': 'swipe', 'parameter': {'card_no': '88888', 'img_binary': '000000000000'}}
+  The client received data => {"status": "Fail", "reason": "card_no and time is required"}
+
+  The client send data =>{'command': 'swipe', 'parameter': {'card_no': '99999', 'time': '2022/05/02', 'img_binary': '000000000000'}}
+  The client received data => {"status": "Fail", "reason": "card_no is not found"}
+
+  The client send data =>{'command': 'swipe', 'parameter': {'card_no': '88888', 'time': '2022/05/02', 'img_binary': '000000000000'}}
+  The client received data => {"status": "Success", "data": {"student_name": "\u4f55\u7fca\u5b87", "status": "in"}}
