@@ -11,8 +11,7 @@ table defination:
              
         log_id , card_no , img_binary , client_no , status  ,  swipe_time 
     
-    
-   
+
     
 command : 
 

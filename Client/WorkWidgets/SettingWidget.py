@@ -3,7 +3,7 @@ from PyQt5.QtCore import Qt
 from WorkWidgets.WidgetComponents import LabelComponent, LineEditComponent, ButtonComponent
 from Camera.MyCamera import Camera
 from CardReader.MyCardReader import CardReader
-from SocketClient.socket_client import SocketClient
+from SocketClient.MySocketClient import SocketClient
 
 class SettingWidget(QtWidgets.QWidget):
     def __init__(self):
@@ -134,7 +134,6 @@ class SettingWidget(QtWidgets.QWidget):
             if self.Port_widget.validatePort():
                 self.selected_port =self.Port_widget.getPort()
                 try:
-                    print("IP: {}, Port: {}".format(self.selected_ip, self.selected_port))
                     self.select_socket_client = SocketClient(self.selected_ip, self.selected_port)
                 except:
                     print('Unable reach server !!')
@@ -216,16 +215,17 @@ class IPWidget(QtWidgets.QFrame):
             for addr_name, lineEdit in self.IP_lineEdit.items():
                 if source is lineEdit:
                     if addr_name != 'subAddr1':
-                        if ((lineEdit.text() == '' and event.text() == '\x08') or  
+                        if ((lineEdit.text() == '' and event.key() == 16777219) or  
                             (lineEdit.cursorPosition() == 0 and event.key() == 16777234)):
                             newIndex = str(int(addr_name[-1]) - 1)
                             self.IP_lineEdit['subAddr' + newIndex].setFocus()
                     if addr_name != 'subAddr4':
-                        if ((lineEdit.text() != '' and event.text() == '.') or 
+                        if ((lineEdit.text() != '' and event.key() == 46) or 
                             (lineEdit.cursorPosition() == len(lineEdit.text()) and
                              event.key() == 16777236)):
                             newIndex = str(int(addr_name[-1]) + 1)
                             self.IP_lineEdit['subAddr' + newIndex].setFocus()
+            #print(event.key())
         return super().eventFilter(source, event)
     
     def validateIP(self):

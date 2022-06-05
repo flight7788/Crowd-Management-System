@@ -32,7 +32,13 @@ class CardReader(QtCore.QThread):
          self.connect = False
          self.device.close()
 
-
+  def sendPass(self):
+    if(self.connect):
+      self.device.send_data('Card:PASS\n')
+  
+  def sendFail(self):
+    if(self.connect):
+      self.device.send_data('Card:FAIL\n')
 
 
 class COM:

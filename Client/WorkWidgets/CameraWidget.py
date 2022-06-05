@@ -1,16 +1,11 @@
 from PyQt5 import QtWidgets, QtGui, QtCore
 from PyQt5.QtCore import Qt
-from matplotlib.pyplot import text
 from WorkWidgets.WidgetComponents import LabelComponent, LineEditComponent, ButtonComponent
+
 from Camera.MyCamera import Camera
 from CardReader.MyCardReader import CardReader
-
-import numpy as np
-import cv2
-import mediapipe as mp
-
-
-mpFacedetection = mp.solutions.face_detection.FaceDetection()
+from Processor.MyImageProcessor import ImageProcessor
+from Processor.MyServerProcessor import ServerProcessor
 
 class CameraWidget(QtWidgets.QWidget):
     def __init__(self):
@@ -19,16 +14,15 @@ class CameraWidget(QtWidgets.QWidget):
         self.MyReader = None
         self.ProcessCam = None
         self.SocketClient = None
-        self.detect_face = False
-        self.face_exist = False
-        self.current_img = None
+        
         self.my_setting = {}
+    
         self.menu_widget = MenuWidget()
         self.status_widget = StatusWidget()
 
-        self.menu_widget.stu_ID_lineEdit.mousePressEvent = self.stuID_lineEdit_Event
-        self.menu_widget.checkIn_button.clicked.connect(self.manualEnter)
-        self.menu_widget.checkOut_button.clicked.connect(self.manualLeave)
+        self.menu_widget.stu_ID_lineEdit.mousePressEvent = self.stuID_lineEditEvent
+        self.menu_widget.checkIn_button.clicked.connect(self.manualEnterEvent)
+        self.menu_widget.checkOut_button.clicked.connect(self.manualLeaveEvent)
 
         self.viewData = QtWidgets.QLabel('this is an image', self)
         self.viewData.setGeometry(QtCore.QRect(0, 0, 650, 650))
@@ -46,121 +40,79 @@ class CameraWidget(QtWidgets.QWidget):
         
         layout.setAlignment(Qt.AlignCenter) 
         self.setLayout(layout)        
+
+        self.image_processor = ImageProcessor(self.viewData, True)
+        self.server_processor = None
     
     def setNewSetting(self, new_setting: dict):
         self.my_setting = new_setting
-
-    def showData(self, img):
-        self.Ny, self.Nx, _ = img.shape  
-        if(self.detect_face):
-            img, self.face_exist = self.detectFace(img)
-        img = cv2.resize(img, (640, 480), interpolation=cv2.INTER_CUBIC)
-        self.current_img = img
-        img = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
-        qimg = QtGui.QImage(img.data, self.Nx, self.Ny, QtGui.QImage.Format_RGB888)
-        self.viewData.setPixmap(QtGui.QPixmap.fromImage(qimg))
-
-    def encodeImg(self, img):
-        img_encode = cv2.imencode('.png', img)[1]
-        data_encode = np.array(img_encode)
-        data_encode = data_encode.tolist()
-        return data_encode
-
-    def detectFace(self, img):
-        color = (0, 255, 0)  
-        rgbImg = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
-        res = mpFacedetection.process(rgbImg)
-        exist = False
-        if res.detections:
-            exist = True
-            for _, dectection in enumerate(res.detections):
-                box = dectection.location_data.relative_bounding_box
-                h, w, c = rgbImg.shape
-                my_box = int(box.xmin * w), int(box.ymin * h), \
-                         int(box.width * w), int(box.height * h) 
-                cv2.rectangle(img, my_box, color, 2)
-        return img, exist
         
-    def readerCallback(self, data):
-        if self.SocketClient != None and self.checkWithServer(data) and self.face_exist:
-            status = self.sendPassToServer(data, self.encodeImg(self.current_img))
-            if status != False:
-                self.status_widget.showPass('Enter' if status=='in' else 'Leave')
-                self.MyReader.device.send_data('Card:PASS\n')
+    def readerCallEvent(self, data):
+        if self.SocketClient != None and self.server_processor.checkWithServer(data) and \
+                self.image_processor.face_exist:
+            recv_data = self.server_processor.sendPassToServer(data, \
+                                                self.status_widget.Time_val_label.text(), \
+                                                self.image_processor.encodeImg(self.image_processor.current_img))
+            if recv_data != False:
+                self.status_widget.showPass('Enter' if recv_data['status']=='in' else 'Leave')
+                self.status_widget.Name_val_label.setText(recv_data['student_name'])
+                self.status_widget.ID_val_label.setText(recv_data['student_id'])
+                self.MyReader.sendPass()
             else:
                 self.status_widget.showFail()
-                self.MyReader.device.send_data('Card:FAIL\n')
+                self.MyReader.sendFail()
         else:
-          self.MyReader.device.send_data('Card:FAIL\n')
+          self.MyReader.sendFail()
           self.status_widget.showFail()
-
-    def checkWithServer(self, data):
-        self.SocketClient.send_command('query_card', {'card_no':data})
-        recv_data = self.SocketClient.wait_response()
-        if recv_data['status'] != 'OK':
-            print('query_card:{}'.format(recv_data['status']))
-            return False
-        return recv_data['data']['is_school_member']
-        
-    def sendPassToServer(self, data, imgEncode=''):
-        self.SocketClient.send_command('swipe', {   'card_no': data, \
-                                                    'time': self.status_widget.Time_val_label.text(),  \
-                                                    'img_binary': imgEncode})
-        recv_data = self.SocketClient.wait_response()
-        if recv_data['status'] != 'OK':
-            print('swipe:{}'.format(recv_data['status']))
-            return False
-        self.status_widget.Name_val_label.setText(recv_data['data']['student_name'])
-        self.status_widget.ID_val_label.setText(recv_data['data']['student_id'])
-        return recv_data['data']['status']
     
-    def stuID_lineEdit_Event(self, event):
+    def stuID_lineEditEvent(self, event):
         self.menu_widget.checkIn_button.setDisabled(False)
         self.menu_widget.checkOut_button.setDisabled(False)
 
-    def manualEnter(self):
+    def manualEnterEvent(self):
         if self.SocketClient != None and self.MyReader != None:
-            if self.menu_widget.stu_ID_lineEdit.text() != '' and self.face_exist:
-                self.SocketClient.send_command('manual_check', \
-                    {   'student_id': self.menu_widget.stu_ID_lineEdit.text(), \
-                        'time': self.status_widget.Time_val_label.text(),  \
-                        'img_binary': self.encodeImg(self.current_img), \
-                        'status': 'in'})                                              
-                recv_data = self.SocketClient.wait_response()
-                if recv_data['status'] == 'OK':
-                    self.MyReader.device.send_data('Card:PASS\n')
+            if self.menu_widget.stu_ID_lineEdit.text() != '' and \
+                self.image_processor.face_exist:
+                recv_data = self.server_processor.sendManualPassToServer(
+                        self.menu_widget.stu_ID_lineEdit.text(), 
+                        self.status_widget.Time_val_label.text(),
+                        self.image_processor.encodeImg(self.image_processor.current_img),
+                        'in')
+
+                if recv_data != False:
+                    self.MyReader.sendPass()
                     self.status_widget.showPass('Enter')
-                    self.status_widget.Name_val_label.setText(recv_data['data']['student_name'])
+                    self.status_widget.Name_val_label.setText(recv_data)
                     self.status_widget.ID_val_label.setText(self.menu_widget.stu_ID_lineEdit.text())
                 else:
-                    self.MyReader.device.send_data('Card:FAIL\n')
+                    self.MyReader.sendFail()
                     self.status_widget.showFail()
             else:
-                self.MyReader.device.send_data('Card:FAIL\n')
+                self.MyReader.sendFail()
                 self.status_widget.showFail()
         self.menu_widget.checkIn_button.setDisabled(True)
         self.menu_widget.checkOut_button.setDisabled(True)
         self.menu_widget.stu_ID_lineEdit.setText('')
           
-    def manualLeave(self):
+    def manualLeaveEvent(self):
         if self.SocketClient != None and self.MyReader != None:
-            if self.menu_widget.stu_ID_lineEdit.text() != '' and self.face_exist:
-                self.SocketClient.send_command('manual_check', \
-                    {   'student_id': self.menu_widget.stu_ID_lineEdit.text(), \
-                        'time': self.status_widget.Time_val_label.text(),  \
-                        'img_binary': self.encodeImg(self.current_img), \
-                        'status': 'out'})                                              
-                recv_data = self.SocketClient.wait_response()
-                if recv_data['status'] == 'OK':
-                    self.MyReader.device.send_data('Card:PASS\n')
+            if self.menu_widget.stu_ID_lineEdit.text() != '' and \
+                self.image_processor.face_exist:
+                recv_data = self.server_processor.sendManualPassToServer(
+                        self.menu_widget.stu_ID_lineEdit.text(), 
+                        self.status_widget.Time_val_label.text(),
+                        self.image_processor.encodeImg(self.image_processor.current_img),
+                        'out')
+                if recv_data != False:
+                    self.MyReader.sendPass()
                     self.status_widget.showPass('Leave')
-                    self.status_widget.Name_val_label.setText(recv_data['data']['student_name'])
+                    self.status_widget.Name_val_label.setText(recv_data)
                     self.status_widget.ID_val_label.setText(self.menu_widget.stu_ID_lineEdit.text())
                 else:
-                    self.MyReader.device.send_data('Card:FAIL\n')
+                    self.MyReader.sendFail()
                     self.status_widget.showFail()
             else:
-                self.MyReader.device.send_data('Card:FAIL\n')
+                self.MyReader.sendFail()
                 self.status_widget.showFail()
         self.menu_widget.checkIn_button.setDisabled(True)
         self.menu_widget.checkOut_button.setDisabled(True)
@@ -169,7 +121,7 @@ class CameraWidget(QtWidgets.QWidget):
     def load(self):
         if self.my_setting['COM'] != None:
             self.MyReader = CardReader()
-            self.MyReader.uid.connect(self.readerCallback)
+            self.MyReader.uid.connect(self.readerCallEvent)
             self.MyReader.open(self.my_setting['COM'], 115200) 
             self.MyReader.start()
             self.menu_widget.checkIn_button.setDisabled(False)
@@ -180,13 +132,13 @@ class CameraWidget(QtWidgets.QWidget):
 
         if self.my_setting['CAM'] != None:
             self.ProcessCam = Camera(selected_CAM=self.my_setting['CAM'])
-            self.ProcessCam.rawdata.connect(self.showData) 
+            self.ProcessCam.rawdata.connect(self.image_processor.showData) 
             self.ProcessCam.open()
             self.ProcessCam.start()
 
         if self.my_setting['Server'] != None:
             self.SocketClient = self.my_setting['Server']
-
+            self.server_processor =  ServerProcessor(self.SocketClient)
         self.menu_widget.checkIn_button.setDisabled(True)
         self.menu_widget.checkOut_button.setDisabled(True)
     
