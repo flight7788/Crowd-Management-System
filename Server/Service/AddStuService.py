@@ -1,6 +1,6 @@
-from Repository.StudentLog import StudentLog
 from Repository.StudentProfile import StudentProfile
-class AddStu:
+from Component.MessageProcessor import MessageProcessor
+class AddStu(MessageProcessor):
         
     def execute(self,params=[]):
     
@@ -11,22 +11,20 @@ class AddStu:
             
             student_id_profile = StudentProfile().get_a_student_by_student_id(student_id = student_id)
             if student_id_profile['is_success'] :
-                 return {'status' : 'Fail' , 'reason' : 'Student id {} alreay exists'.format(student_id)}
+                return self.return_fail_with_reason('Student id {} alreay exists'.format(student_id))
              
             card_no_profile = StudentProfile().get_a_student_by_card_no(card_no = card_no)
             if card_no_profile['is_success'] :
-                 return {'status' : 'Fail' , 'reason' : 'Card No {} alreay exists'.format(card_no)}
+                 return self.return_fail_with_reason('Card No {} alreay exists'.format(card_no))
             
             
             add_student = StudentProfile().add_student(student_name = student_name,card_no = card_no,student_id = student_id)
             
             #check if card_no exists
             if not add_student['is_success'] :
-                return {'status' : 'Fail' , 'reason' : add_student['message'] }
+                return self.return_fail_with_reason(add_student['message'])
 
-    
-            
-            return  {'status':'Success' }
+            return  self.return_success()
         
-        return {'status' : 'Fail' , 'reason' : 'card_no , time and status is required'}
+        return self.return_fail_with_reason('card_no , time and status is required')
 

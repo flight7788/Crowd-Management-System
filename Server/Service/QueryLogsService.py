@@ -1,8 +1,8 @@
-from threading import ExceptHookArgs
 from Repository.StudentLog import StudentLog
-from Repository.StudentProfile import StudentProfile
 from datetime import datetime
-class QueryLogs:
+from Component.MessageProcessor import MessageProcessor
+
+class QueryLogs(MessageProcessor):
         
     def execute(self,params=[]):
         
@@ -14,9 +14,8 @@ class QueryLogs:
                 start_time = datetime.strptime(start_time,'%Y/%m/%d %H:%M:%S')
                 end_time = datetime.strptime(end_time,'%Y/%m/%d %H:%M:%S')
             except ValueError as e:
-                return  {'status':'Fail' , 'reason': 'Datetime format must like [YYYY/mm/dd HH:MM:SS], detail: {}'.format(e)  }
+                return self.return_fail_with_reason('Datetime format must like [YYYY/mm/dd HH:MM:SS], detail: {}'.format(e))
                 
-            
             result = StudentLog().get_logs()
             logs = result['data']   
             filter_data = dict()
@@ -31,16 +30,15 @@ class QueryLogs:
                 except Exception as e:
                     print('Ignore : Parse SwipeDateTime Error, {} , date id is {}'.format(e,key))
                     pass
-                
-                
             
             if result['is_success'] and len(logs)>0 :
-                return  {'status':'Success' , 'data': filter_data }
+                return self.return_success_with_data(filter_data)
             
             else :
-                return  {'status':'Fail' , 'reason': 'no data'  }
+                self.return_fail_with_reason('no data')
             
-        return {'status' : 'Fail' , 'reason' : 'start_time and end_time is required'}
+        return self.return_fail_with_reason('start_time and end_time is required')
+
 
         
     

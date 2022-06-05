@@ -1,6 +1,7 @@
-from Repository.StudentLog import StudentLog
 from Repository.StudentProfile import StudentProfile
-class QueryCard:
+from Component.MessageProcessor import MessageProcessor
+
+class QueryCard(MessageProcessor):
         
     def execute(self,params=[]):
         
@@ -10,11 +11,12 @@ class QueryCard:
             result = StudentProfile().get_a_student_by_card_no(card_no = card_no)
             
             if not result['is_success'] :
-                return {'status' : 'Fail'}
+                return self.return_fail_with_reason(result['message'])
 
-            return  {'status':'Success' , 'data': {'is_school_member':True} }
+            return  self.return_success_with_data({'is_school_member':True})
             
-        return {'status' : 'Fail' , 'reason' : 'card_no is required'} 
+        return self.return_fail_with_reason('card_no is required')
+
 
         
     

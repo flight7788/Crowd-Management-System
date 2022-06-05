@@ -1,7 +1,9 @@
 from Repository.StudentLog import StudentLog
 from Repository.StudentProfile import StudentProfile
 from datetime import datetime
-class Swipe:
+from Component.MessageProcessor import MessageProcessor
+
+class Swipe(MessageProcessor):
         
     def execute(self,params=[]):
         
@@ -16,11 +18,11 @@ class Swipe:
             try:
                 datetime.strptime(time,'%Y/%m/%d %H:%M:%S')
             except ValueError as e:
-                return  {'status':'Fail' , 'reason': 'Datetime format must like [YYYY/mm/dd HH:MM:SS], detail: {}'.format(e)  }
+                self.return_fail_with_reason('Datetime format must like [YYYY/mm/dd HH:MM:SS], detail: {}'.format(e))
             
             #check if card_no exists
             if not student_profile['is_success'] :
-                return {'status' : 'Fail' , 'reason' : 'card_no is not found'}
+                self.return_fail_with_reason('card_no is not found')
 
             student_name = student_profile['data']['student_name']
             swipe_logs = StudentLog().get_logs_by_card_no(card_no)
@@ -28,11 +30,12 @@ class Swipe:
             result = StudentLog().add_log(card_no,img_binary,'',swipe_status,time) 
             
             if not result['is_success'] :
-                return {'status' : 'Fail' , 'reason' : result['message'] }
+                return self.return_fail_with_reason(result['message'])
             
-            return  {'status':'Success' , 'data': {'student_name' : student_name ,'status' : swipe_status}}
+            return self.return_success_with_data({'student_name' : student_name ,'status' : swipe_status})
      
-        return {'status' : 'Fail' , 'reason' : 'card_no and time is required'}
+        return self.return_fail_with_reason('card_no and time is required')
+
 
         
     

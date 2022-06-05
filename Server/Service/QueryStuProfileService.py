@@ -1,6 +1,7 @@
-from Repository.StudentLog import StudentLog
 from Repository.StudentProfile import StudentProfile
-class QueryStuProfile:
+from Component.MessageProcessor import MessageProcessor
+
+class QueryStuProfile(MessageProcessor):
         
     def execute(self,params=[]):
         
@@ -10,12 +11,13 @@ class QueryStuProfile:
             result = StudentProfile().get_a_student_by_student_id(student_id=student_id)
             
             if not result['is_success'] :
-                return {'status' : 'Fail' , 'reason' : result['message'] }
+                return self.return_fail_with_reason(result['message'])
             
             if result['is_success'] and len(result['data'])>0 :
-                return  {'status':'Success' , 'data':result['data'] }
+                return self.return_success_with_data(result['data'])
             
-        return {'status' : 'Fail' , 'reason' : 'student_id  is required'}
+        return self.return_fail_with_reason('student_id  is required')
+
 
         
     

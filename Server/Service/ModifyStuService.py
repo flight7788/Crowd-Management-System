@@ -1,6 +1,7 @@
-from Repository.StudentLog import StudentLog
 from Repository.StudentProfile import StudentProfile
-class ModifyStu:
+from Component.MessageProcessor import MessageProcessor
+
+class ModifyStu(MessageProcessor):
         
     def execute(self,params=[]):
     
@@ -11,7 +12,7 @@ class ModifyStu:
             
             student_profile = StudentProfile().get_a_student_by_student_id(student_id = student_id)
             if not student_profile['is_success'] :
-                 return {'status' : 'Fail' , 'reason' : 'Student id {} is not exists'.format(student_id)}
+                 return self.return_fail_with_reason('Student id {} is not exists'.format(student_id))
              
             # card_no_profile = StudentProfile().get_a_student_by_card_no(card_no = card_no)
             # if card_no_profile['is_success'] :
@@ -23,10 +24,10 @@ class ModifyStu:
             
             #check if card_no exists
             if not update_student['is_success'] :
-                return {'status' : 'Fail' , 'reason' : update_student['message'] }
-
+                return self.return_fail_with_reason( update_student['message'])
     
-            return  {'status':'Success' }
+            return self.return_success()
         
-        return {'status' : 'Fail' , 'reason' : 'student_id , student_name , card_no is required'}
+        return self.return_fail_with_reason('student_id , student_name , card_no is required')
+
 

@@ -1,4 +1,4 @@
-from FireStore.FireStoreCommander import FireStoreCommander
+from Component.FireStore.FireStoreCommander import FireStoreCommander
 
 class StudentProfile():  
     

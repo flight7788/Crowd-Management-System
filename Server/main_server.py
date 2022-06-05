@@ -1,5 +1,5 @@
-from FireStore.FireStoreConnector import FireStoreInitializer
-from SocketServer import SocketServer
+from Component.FireStore.FireStoreConnector import FireStoreInitializer
+from Component.SocketServer import SocketServer
 from Service.QueryStuService import QueryStu
 from Service.QueryCardService import QueryCard
 from Service.SwipeService import Swipe
