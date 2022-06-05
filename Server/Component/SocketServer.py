@@ -1,6 +1,7 @@
 from threading import Thread
 import socket
 import json
+import copy
 
 class SocketServer(Thread):
     def __init__(self, host, port , handler):
@@ -33,20 +34,30 @@ class SocketServer(Thread):
         keep_going = True
         while keep_going:
             try:
-                message = connection.recv(1024).strip().decode()
+                message = connection.recv(20000000).strip().decode()
             except:
                 keep_going = False
             else:
                 if not message:
                     break
+                
+                #print(message)
                 message = json.loads(message)
+                
                 if message['command'] == "close":
                     connection.send("closing".encode())
                     break
                 else:
-                    print('Server Receive # : {} from {}'.format(message,address))
-                    reply_msg = self.handler(message)
                     
+                    show_dict =  copy.deepcopy(message)
+                    
+                    if show_dict['command'] in ['swipe','manual_check'] :
+                       print(len(show_dict['parameters']['img_binary']))
+                       show_dict['parameters']['img_binary'] = 'list (uint8)'
+                       
+                    print('Server Receive # : {} from {}'.format(show_dict,address))
+                    
+                    reply_msg = self.handler(message)
                     connection.send(json.dumps(reply_msg).encode())
                     
         

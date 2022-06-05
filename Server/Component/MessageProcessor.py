@@ -1,10 +1,10 @@
 class MessageProcessor:
         
     def return_success(self):
-        return {'status' : 'Success'}
+        return {'status' : 'OK'}
     
     def return_success_with_data(self,data):
-        return {'status' : 'Success' , 'data' : data}
+        return {'status' : 'OK' , 'data' : data}
         
     def return_fail(self):
         return {'status' : 'Fail' }

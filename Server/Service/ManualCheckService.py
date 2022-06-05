@@ -2,6 +2,7 @@ from Repository.StudentLog import StudentLog
 from Repository.StudentProfile import StudentProfile
 from datetime import datetime
 from Component.MessageProcessor import MessageProcessor
+from Component.ImageProcessor import ImageProcessor  
 
 class ManualCheck(MessageProcessor):
         
@@ -28,7 +29,9 @@ class ManualCheck(MessageProcessor):
             student_name = student_profile['data']['student_name']
             card_no = student_profile['data']['card_no']
 
-            result = StudentLog().add_log(card_no,img_binary,'', status ,time) 
+            img_file  =  ImageProcessor().decodeImg(img_binary)
+            
+            result = StudentLog().add_log(card_no,img_file,'', status ,time) 
             
             if not result['is_success'] :
                 return self.return_fail_with_reason(result['message'])

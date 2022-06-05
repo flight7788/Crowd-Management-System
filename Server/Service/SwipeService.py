@@ -2,6 +2,7 @@ from Repository.StudentLog import StudentLog
 from Repository.StudentProfile import StudentProfile
 from datetime import datetime
 from Component.MessageProcessor import MessageProcessor
+from Component.ImageProcessor import ImageProcessor
 
 class Swipe(MessageProcessor):
         
@@ -25,14 +26,18 @@ class Swipe(MessageProcessor):
                 self.return_fail_with_reason('card_no is not found')
 
             student_name = student_profile['data']['student_name']
+            student_id = student_profile['data']['student_id']
             swipe_logs = StudentLog().get_logs_by_card_no(card_no)
             swipe_status = self.getSwipeStatus(swipe_logs)
-            result = StudentLog().add_log(card_no,img_binary,'',swipe_status,time) 
+            
+            img_file  =  ImageProcessor().decodeImg(img_binary)
+            
+            result = StudentLog().add_log(card_no, img_file,'',swipe_status,time) 
             
             if not result['is_success'] :
-                return self.return_fail_with_reason(result['message'])
+                 return self.return_fail_with_reason(result['message'])
             
-            return self.return_success_with_data({'student_name' : student_name ,'status' : swipe_status})
+            return self.return_success_with_data({'student_name' : student_name ,'status' : swipe_status ,'student_id': student_id})
      
         return self.return_fail_with_reason('card_no and time is required')
 
@@ -43,8 +48,7 @@ class Swipe(MessageProcessor):
     
         #if no data, means first swipe in
         if(swipe_log['is_success'] and len(swipe_log['data'])>0):   
-          print(sorted(swipe_log['data'].keys()))
-          
+                    
           #find last log in query result
           last_id = str(sorted([int(x) for x in swipe_log['data'].keys()])[-1])
           last_data = swipe_log['data'][last_id]
