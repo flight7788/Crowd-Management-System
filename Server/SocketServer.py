@@ -45,7 +45,7 @@ class SocketServer(Thread):
                     connection.send("closing".encode())
                     break
                 else:
-                    print("server received: {} from {}".format(message,address))
+                    print('Server Receive # : {} from {}'.format(message,address))
                     reply_msg = self.handler(message)
                     
                     connection.send(json.dumps(reply_msg).encode())

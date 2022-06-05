@@ -14,7 +14,7 @@ class QueryCard:
 
             return  {'status':'Success' , 'data': {'is_school_member':True} }
             
-        return {'status' : 'Fail'}
+        return {'status' : 'Fail' , 'reason' : 'card_no is required'} 
 
         
     

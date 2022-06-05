@@ -4,6 +4,12 @@ from Service.QueryStuService import QueryStu
 from Service.QueryCardService import QueryCard
 from Service.SwipeService import Swipe
 from Service.ManualCheckService import ManualCheck
+from Service.QueryStuProfileService import QueryStuProfile
+from Service.AddStuService import AddStu
+from Service.DeleteStuService import DeleteStu
+from Service.ModifyStuService import ModifyStu
+from Service.QueryAllStuService import QueryAllStu
+from Service.QueryLogsService import QueryLogs
 
 FIRESTORE_KEYCHAIN = "connection_info.json"
 HOST = "140.124.39.131"
@@ -15,17 +21,23 @@ FUNCTION_METHOD = {
       'query_card' :  QueryCard,
       'swipe' : Swipe,
       'manual_check' : ManualCheck,
-    # 'modify' : ModifyStu,
+      'query_stu_profile' : QueryStuProfile,
+      'add_stu' : AddStu,
+      'delete_stu' : DeleteStu,
+      'modify_stu' : ModifyStu,
+      'query_all_stu' : QueryAllStu,
+      'query_logs' : QueryLogs
 }
 
 def receive_handler(messages):
     cmd = messages['command']
     params = messages['parameter']
     
-    print(messages)
-    
     try:
-        return FUNCTION_METHOD[cmd]().execute(params)
+        
+        message = FUNCTION_METHOD[cmd]().execute(params)
+        print('Server Response # : {}'.format(message))
+        return message
     
     except  Exception as e:
 
@@ -54,17 +66,4 @@ def main():
     server.server_socket.close()
     print("leaving ....... ")   
 
-
 main()
-
-
-
-    #StudentLog(db).add_log('100000','','0','in','2022/01/01')
-    #print(StudentLog(db).get_a_log(2))
-    #StudentProfile(db).add_student('何翊宇','100000')
-    #print(StudentProfile(db).get_students())
-    #print(db.insert(collection_name='student_profile',data={'name':'123','stu':'heyiyu'}))
-    #print(db.update(collection_name='student_profile',id=4,data={'name':'111','stu':'111111'}))
-    #print(db.delete(collection_name='student_profile',id=4))
-    #print(db.query(collection_name='student_profile',column_name = 'name', key_word='111'))
-    #print(db.query(collection_name='student_profile',id=1))

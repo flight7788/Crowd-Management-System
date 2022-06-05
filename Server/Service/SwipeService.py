@@ -1,5 +1,6 @@
 from Repository.StudentLog import StudentLog
 from Repository.StudentProfile import StudentProfile
+from datetime import datetime
 class Swipe:
         
     def execute(self,params=[]):
@@ -9,6 +10,13 @@ class Swipe:
             time = params['time']
             img_binary =  params['img_binary'] if ('img_binary' in params)  else  ''
             student_profile = StudentProfile().get_a_student_by_card_no(card_no = card_no)
+            
+            
+            #check datetime format is valid
+            try:
+                datetime.strptime(time,'%Y/%m/%d %H:%M:%S')
+            except ValueError as e:
+                return  {'status':'Fail' , 'reason': 'Datetime format must like [YYYY/mm/dd HH:MM:SS], detail: {}'.format(e)  }
             
             #check if card_no exists
             if not student_profile['is_success'] :
@@ -20,7 +28,7 @@ class Swipe:
             result = StudentLog().add_log(card_no,img_binary,'',swipe_status,time) 
             
             if not result['is_success'] :
-                return {'status' : 'Fail'}
+                return {'status' : 'Fail' , 'reason' : result['message'] }
             
             return  {'status':'Success' , 'data': {'student_name' : student_name ,'status' : swipe_status}}
      

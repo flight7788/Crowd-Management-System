@@ -1,34 +1,114 @@
 query_stu
 
-  The client send data =>{'command': 'query_stu', 'parameter': {'student_id': '110368035'}}
-  The client received data => {"status": "Success", "data": {"1": {"img_binary": "", "client_no": "1", "status": "in", "swipe_datetime": "2022/05/01", "card_no": "88888"}, "10": {"client_no": "", "swipe_time": "2022/05/02", "status": "in", "img_binary": "000000000000", "card_no": "88888"}, "11": {"img_binary": "000000000000", "swipe_time": "2022/05/02", "client_no": "", "status": "out", "card_no": "88888"}, "12": {"client_no": "", "swipe_time": "2022/05/02", "status": "in", "card_no": "88888", "img_binary": "000000000000"}, "13": {"swipe_time": "2022/05/02", "status": "out", "card_no": "88888", "img_binary": "000000000000", "client_no": ""}, "14": {"swipe_time": "2022/05/02", "img_binary": "000000000000", "status": "in", "card_no": "88888", "client_no": ""}, "2": {"swipe_time": "2022/01/01", "status": "out", "card_no": "88888", "img_binary": "", "client_no": "0"}, "3": {"status": "in", "img_binary": "000000000000", "card_no": "88888", "client_no": "", "swipe_time": "2022/05/02"}, "4": {"client_no": "", "swipe_time": "2022/05/02", "status": "in", "img_binary": "000000000000", "card_no": "88888"}, "5": {"img_binary": "000000000000", "swipe_time": "2022/05/02", "status": "in", "client_no": "", "card_no": "88888"}, "6": {"swipe_time": "2022/05/02", "status": "in", "img_binary": "000000000000", "card_no": "88888", "client_no": ""}, "7": {"status": "in", "img_binary": "000000000000", "card_no": "88888", "client_no": "", "swipe_time": "2022/05/02"}, "8": {"card_no": "88888", "img_binary": "000000000000", "client_no": "", "swipe_time": "2022/05/02", "status": "in"}, "9": {"swipe_time": "2022/05/02", "status": "in", "card_no": "88888", "img_binary": "000000000000", "client_no": ""}}}
+	The client send data =>{'command': 'query_stu', 'parameter': {'student_id': '110368035'}}
+	The client received data => {"status": "Success", "data": {"1": {"img_binary": "", "client_no": "1", "status": "in", "swipe_datetime": "2022/05/01", "card_no": "88888"}, "10": {"client_no": "", "swipe_time": "2022/05/02", "status": "in", "img_binary": "000000000000", "card_no": "88888"}, "11": {"img_binary": "000000000000", "swipe_time": "2022/05/02", "client_no": "", "status": "out", "card_no": "88888"}, "12": {"client_no": "", "swipe_time": "2022/05/02", "status": "in", "card_no": "88888", "img_binary": "000000000000"}, "13": {"swipe_time": "2022/05/02", "status": "out", "card_no": "88888", "img_binary": "000000000000", "client_no": ""}, "14": {"swipe_time": "2022/05/02", "img_binary": "000000000000", "status": "in", "card_no": "88888", "client_no": ""}, "2": {"swipe_time": "2022/01/01", "status": "out", "card_no": "88888", "img_binary": "", "client_no": "0"}, "3": {"status": "in", "img_binary": "000000000000", "card_no": "88888", "client_no": "", "swipe_time": "2022/05/02"}, "4": {"client_no": "", "swipe_time": "2022/05/02", "status": "in", "img_binary": "000000000000", "card_no": "88888"}, "5": {"img_binary": "000000000000", "swipe_time": "2022/05/02", "status": "in", "client_no": "", "card_no": "88888"}, "6": {"swipe_time": "2022/05/02", "status": "in", "img_binary": "000000000000", "card_no": "88888", "client_no": ""}, "7": {"status": "in", "img_binary": "000000000000", "card_no": "88888", "client_no": "", "swipe_time": "2022/05/02"}, "8": {"card_no": "88888", "img_binary": "000000000000", "client_no": "", "swipe_time": "2022/05/02", "status": "in"}, "9": {"swipe_time": "2022/05/02", "status": "in", "card_no": "88888", "img_binary": "000000000000", "client_no": ""}}}
 
 
-  The client send data =>{'command': 'query_stu', 'parameter': {'student_id': '110000000'}}
-  The client received data => {"status": "Fail"}
+	The client send data =>{'command': 'query_stu', 'parameter': {'student_id': '110000000'}}
+	The client received data => {"status": "Fail"}
   
 query_card
-  The client send data =>{'command': 'query_card', 'parameter': {'card_no': '88888'}}
-  The client received data => {"status": "Success", "data": {"is_school_member": true}}
+	The client send data =>{'command': 'query_card', 'parameter': {'card_no': '88888'}}
+	The client received data => {"status": "Success", "data": {"is_school_member": true}}
 
-  The client send data =>{'command': 'query_card', 'parameter': {'card_no': '99999'}}
-  The client received data => {"status": "Fail"}
+	The client send data =>{'command': 'query_card', 'parameter': {'card_no': '99999'}}
+	The client received data => {"status": "Fail"}
 
 swipe
 
-  The client send data =>{'command': 'swipe', 'parameter': {'card_no': '88888', 'img_binary': '000000000000'}}
-  The client received data => {"status": "Fail", "reason": "card_no and time is required"}
 
-  The client send data =>{'command': 'swipe', 'parameter': {'card_no': '99999', 'time': '2022/05/02', 'img_binary': '000000000000'}}
-  The client received data => {"status": "Fail", "reason": "card_no is not found"}
 
-  The client send data =>{'command': 'swipe', 'parameter': {'card_no': '88888', 'time': '2022/05/02', 'img_binary': '000000000000'}}
-  The client received data => {"status": "Success", "data": {"student_name": "\u4f55\u7fca\u5b87", "status": "in"}}
+	The client send data =>{'command': 'swipe', 'parameter': {'card_no': '88888', 'img_binary': '000000000000'}}
+	The client received data => {"status": "Fail", "reason": "card_no and time is required"}
+
+	The client send data =>{'command': 'swipe', 'parameter': {'card_no': '99999', 'time': '2022/05/02', 'img_binary': '000000000000'}}
+	The client received data => {"status": "Fail", "reason": "card_no is not found"}
+	
+	The client send data =>{'command': 'swipe', 'parameter': {'card_no': '88888', 'time': '2022/05/02', 'img_binary': '000000000000'}}
+The client received data => {"status": "Fail", "reason": "Datetime format must like [YYYY/mm/dd HH:MM:SS], detail: time data '2022/05/02' does not match format '%Y/%m/%d %H:%M:%S'"}
+
+	The client send data =>{'command': 'swipe', 'parameter': {'card_no': '88888', 'time': '2022/05/02 00:00:00', 'img_binary': '000000000000'}}
+	The client received data => {"status": "Success", "data": {"student_name": "\u4f55\u7fca\u5b87", "status": "in"}}
   
 manual_check
 
-  The client send data =>{'command': 'manual_check', 'parameter': {'student_id': '110368035', 'time': '2022/06/04', 'status': 'in', 'img_binary': '000000000'}}
-  The client received data => {"status": "Success", "data": {"student_name": "\u4f55\u7fca\u5b87"}} 
+	The client send data =>{'command': 'manual_check', 'parameter': {'student_id': '110368035', 'time': '2022/06/04 00:00:00', 'status': 'in', 'img_binary': '000000000'}}
+	The client received data => {"status": "Success", "data": {"student_name": "\u4f55\u7fca\u5b87"}} 
+
+
+	The client send data =>{'command': 'manual_check', 'parameter': {'student_id': '110000000', 'time': '2022/06/04', 'status': 'in', 'img_binary': '000000000'}}
+    The client received data => {"status": "Fail", "reason": "Datetime format must like [YYYY/mm/dd HH:MM:SS], detail: time data '2022/06/04' does not match format '%Y/%m/%d %H:%M:%S'"}
+
+
+	The client send data =>{'command': 'manual_check', 'parameter': {'student_id': '110000000', 'time': '2022/06/04 00:00:00', 'status': 'in', 'img_binary': '000000000'}}
+	The client received data => {"status": "Fail", "reason": "student_id is not found"}
   
-  The client send data =>{'command': 'manual_check', 'parameter': {'student_id': '110000000', 'time': '2022/06/04', 'status': 'in', 'img_binary': '000000000'}}
-  The client received data => {"status": "Fail", "reason": "student_id is not found"}
+  
+query_stu_profile
+
+	The client send data =>{'command': 'query_stu_profile', 'parameter': {'student_id': '110368035'}}
+	The client received data => {"status": "Success", "data": {"student_name": "\u4f55\u7fca\u5b87", "card_no": "88888", "student_id": "110368035"}}
+
+	The client send data =>{'command': 'query_stu_profile', 'parameter': {'student_id': '110000000'}}
+	The client received data => {"status": "Fail"}
+
+
+add_stu
+
+	The client send data =>{'command': 'add_stu', 'parameter': {'student_id': '110368035'}}
+	The client received data => {"status": "Fail", "reason": "card_no , time and status is required"}
+
+	The client send data =>{'command': 'add_stu', 'parameter': {'student_id': '110368035', 'card_no': '88888', 'student_name': 'HeYiYu'}}
+	The client received data => {"status": "Fail", "reason": "Student id 110368035 alreay exists"}
+
+	The client send data =>{'command': 'add_stu', 'parameter': {'student_id': '110368036', 'card_no': '88888', 'student_name': 'HeYiYu'}}
+	The client received data => {"status": "Fail", "reason": "Card No 88888 alreay exists"}
+
+	The client send data =>{'command': 'add_stu', 'parameter': {'student_id': '110368036', 'card_no': '99999', 'student_name': 'HeYiYu'}}
+	The client received data => {"status": "Success"}
+
+
+
+delete_stu
+
+	The client send data =>{'command': 'delete_stu', 'parameter': {}}
+	The client received data => {"status": "Fail", "reason": "student_id is required"}
+
+	The client send data =>{'command': 'delete_stu', 'parameter': {'student_id': '110368033'}}
+	The client received data => {"status": "Fail", "reason": "Student id 110368033 is not exists"}
+
+
+	The client send data =>{'command': 'delete_stu', 'parameter': {'student_id': '110368036'}}
+	The client received data => {"status": "Success"}
+	
+	
+update_stu
+	The client send data =>{'command': 'update_stu', 'parameter': {'student_id': '110368036', 'card_no': '99999', 'student_name': 'HerYiYuNew'}}
+	The client received data => {"status": "Fail", "reason": "Student id 110368036 is not exists"}
+	
+	
+	The client send data =>{'command': 'update_stu', 'parameter': {'student_id': '110368036'}}
+	The client received data => {"status": "Fail", "reason": "student_id , student_name , card_no is required"}
+	
+	
+	The client send data =>{'command': 'update_stu', 'parameter': {'student_id': '110368035', 'card_no': '88888', 'student_name': 'HerYiYuNew'}}
+	The client received data => {"status": "Success"}
+	
+query_all_stu
+
+	The client send data =>{'command': 'query_all_stu', 'parameter': {}}
+	The client received data => {"status": "Success", "data": {"10": {"student_name": "HerYiYuNew", "card_no": "88888", "student_id": "110368035"}}}
+		
+		
+query_logs
+
+	The client send data =>{'command': 'query_logs', 'parameter': {'start_time': ''}}
+	The client received data => {"status": "Fail", "reason": "start_time and end_time is required"}
+	
+	
+	The client send data =>{'command': 'query_logs', 'parameter': {'start_time': '2022/01/01', 'end_time': '2022/12/31'}}
+	The client received data => {"status": "Fail", "reason": "Datetime format must like [YYYY/mm/dd HH:MM:SS], detail: time data '2022/01/01' does not match format '%Y/%m/%d %H:%M:%S'"}
+	
+	
+	The client send data =>{'command': 'query_logs', 'parameter': {'start_time': '2022/06/01 00:00:00', 'end_time': '2022/06/30 23:59:59'}}
+	The client received data => {"status": "Success", "data": {"15": {"img_binary": "000000000", "card_no": "88888", "client_no": "", "swipe_time": "2022/06/04 00:00:00", "status": "in"}}}
