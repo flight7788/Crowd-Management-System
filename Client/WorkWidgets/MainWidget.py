@@ -37,8 +37,8 @@ class MenuWidget(QtWidgets.QWidget):
         self.setObjectName("menu_widget")
         self.func_widget = func_widget
         layout = QtWidgets.QHBoxLayout()
-        self.setting_button = ButtonComponent(" Return", 20)
-        self.setting_button.setIcon(QtGui.QIcon('./icon/return.png'))
+        self.setting_button = ButtonComponent(" Setting", 20)
+        self.setting_button.setIcon(QtGui.QIcon('./icon/setting.png'))
         self.setting_button.setIconSize(QtCore.QSize(50,50))
 
         self.currentLog_button = ButtonComponent(" Current log", 20)
@@ -78,7 +78,7 @@ class FunctionWidget(QtWidgets.QStackedWidget):
         self.widget_layer_dict = {}
         for name, widget in MyWidget.items():
             self.widget_layer_dict[name] = self.addWidget(widget)
-        self.updateWidget('setting')
+        self.updateWidget('camera')
     
     def updateWidget(self, name):
         self.setCurrentIndex(self.widget_layer_dict[name])

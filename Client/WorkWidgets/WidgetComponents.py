@@ -39,7 +39,10 @@ class ButtonComponent(QtWidgets.QPushButton):
                 border-color: beige;\
                 padding: 3px;\
                 color: rgb(255, 255, 255);}" 
-		    "QPushButton:hover{background-color:white; color: black;}"  
-		    "QPushButton:pressed{background-color:rgb(85, 170, 255); border-style: inset; }"   
+		    "QPushButton:hover{ background-color:white; color: black;}"  
+		    "QPushButton:pressed{ background-color:rgb(85, 170, 255); border-style: inset; }"
+            "QPushButton:disabled{ background-color:rgb(37, 48, 57); \
+                                   border-color: rgb(153, 153, 153);\
+                                   color: rgb(153, 153, 153);}"
         )
 

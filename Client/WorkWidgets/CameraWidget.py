@@ -2,6 +2,8 @@ from PyQt5 import QtWidgets, QtGui, QtCore
 from PyQt5.QtCore import Qt
 from WorkWidgets.WidgetComponents import LabelComponent, LineEditComponent, ButtonComponent
 
+import time
+from datetime import datetime
 from Camera.MyCamera import Camera
 from CardReader.MyCardReader import CardReader
 from Processor.MyImageProcessor import ImageProcessor
@@ -50,8 +52,10 @@ class CameraWidget(QtWidgets.QWidget):
     def readerCallEvent(self, data):
         if self.SocketClient != None and self.server_processor.checkWithServer(data) and \
                 self.image_processor.face_exist:
+            t = time.localtime()
+            date_time = time.strftime("%Y/%m/%d %H:%M:%S", t)
             recv_data = self.server_processor.sendPassToServer(data, \
-                                                self.status_widget.Time_val_label.text(), \
+                                                date_time, \
                                                 self.image_processor.encodeImg(self.image_processor.current_img))
             if recv_data != False:
                 self.status_widget.showPass('Enter' if recv_data['status']=='in' else 'Leave')
@@ -73,9 +77,11 @@ class CameraWidget(QtWidgets.QWidget):
         if self.SocketClient != None and self.MyReader != None:
             if self.menu_widget.stu_ID_lineEdit.text() != '' and \
                 self.image_processor.face_exist:
+                t = time.localtime()
+                date_time = time.strftime("%Y/%m/%d %H:%M:%S", t)
                 recv_data = self.server_processor.sendManualPassToServer(
                         self.menu_widget.stu_ID_lineEdit.text(), 
-                        self.status_widget.Time_val_label.text(),
+                        date_time,
                         self.image_processor.encodeImg(self.image_processor.current_img),
                         'in')
 
@@ -98,9 +104,11 @@ class CameraWidget(QtWidgets.QWidget):
         if self.SocketClient != None and self.MyReader != None:
             if self.menu_widget.stu_ID_lineEdit.text() != '' and \
                 self.image_processor.face_exist:
+                t = time.localtime()
+                date_time = time.strftime("%Y/%m/%d %H:%M:%S", t)
                 recv_data = self.server_processor.sendManualPassToServer(
                         self.menu_widget.stu_ID_lineEdit.text(), 
-                        self.status_widget.Time_val_label.text(),
+                        date_time,
                         self.image_processor.encodeImg(self.image_processor.current_img),
                         'out')
                 if recv_data != False:
@@ -119,26 +127,27 @@ class CameraWidget(QtWidgets.QWidget):
         self.menu_widget.stu_ID_lineEdit.setText('')
     
     def load(self):
-        if self.my_setting['COM'] != None:
-            self.MyReader = CardReader()
-            self.MyReader.uid.connect(self.readerCallEvent)
-            self.MyReader.open(self.my_setting['COM'], 115200) 
-            self.MyReader.start()
-            self.menu_widget.checkIn_button.setDisabled(False)
-            self.menu_widget.checkOut_button.setDisabled(False)
-        else:
-            self.menu_widget.checkIn_button.setDisabled(True)
-            self.menu_widget.checkOut_button.setDisabled(True)
+        if self.my_setting != {}:
+            if self.my_setting['COM'] != None:
+                self.MyReader = CardReader()
+                self.MyReader.uid.connect(self.readerCallEvent)
+                self.MyReader.open(self.my_setting['COM'], 115200) 
+                self.MyReader.start()
+                self.menu_widget.checkIn_button.setDisabled(False)
+                self.menu_widget.checkOut_button.setDisabled(False)
+            else:
+                self.menu_widget.checkIn_button.setDisabled(True)
+                self.menu_widget.checkOut_button.setDisabled(True)
 
-        if self.my_setting['CAM'] != None:
-            self.ProcessCam = Camera(selected_CAM=self.my_setting['CAM'])
-            self.ProcessCam.rawdata.connect(self.image_processor.showData) 
-            self.ProcessCam.open()
-            self.ProcessCam.start()
+            if self.my_setting['CAM'] != None:
+                self.ProcessCam = Camera(selected_CAM=self.my_setting['CAM'])
+                self.ProcessCam.rawdata.connect(self.image_processor.showData) 
+                self.ProcessCam.open()
+                self.ProcessCam.start()
 
-        if self.my_setting['Server'] != None:
-            self.SocketClient = self.my_setting['Server']
-            self.server_processor =  ServerProcessor(self.SocketClient)
+            if self.my_setting['Server'] != None:
+                self.SocketClient = self.my_setting['Server']
+                self.server_processor =  ServerProcessor(self.SocketClient)
         self.menu_widget.checkIn_button.setDisabled(True)
         self.menu_widget.checkOut_button.setDisabled(True)
     
