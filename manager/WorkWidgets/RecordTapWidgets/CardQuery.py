@@ -32,10 +32,10 @@ class stackWidget(QtWidgets.QStackedWidget):
         current_widget.load()
 
 class Query(QtWidgets.QWidget):
-    def __init__(self,update_widget,respone):
+    def __init__(self,update_widget,respone_callback):
         super().__init__()
         self.update_widget = update_widget
-        self.respone = respone
+        self.respone_callback = respone_callback
         layout = QtWidgets.QGridLayout()
         
         stuid_label = LabelComponent(16,"學號:")
@@ -57,33 +57,30 @@ class Query(QtWidgets.QWidget):
         self.setLayout(layout)
     
     def load(self):
-        pass
+        self.stuid_input.setText("")
     
     def query_action(self):
         stuid = self.stuid_input.text()
         if len(stuid) > 0:
-            query_data = {"name":stuid}
-            self.execute_query = ExecuteCommand(command='query',data=query_data)
+            query_data = {"student_id":stuid}
+            self.execute_query = ExecuteCommand(command='query_stu',data=query_data)
             self.execute_query.start()
             self.execute_query.return_sig.connect(self.query_followUp)
     
     def query_followUp(self,response):
         response = json.loads(response)
         if response['status'] == 'OK':
-            sys_info =response['parameters']
-        else:
-            sys_info = "'{}' is not exist".format(self.stuid_input.text())
-        self.update_widget("respone")
-        self.respone(sys_info)
-        
+            self.respone_callback(response['data'])
+            self.update_widget('respone')
+            
 class Respone(QtWidgets.QWidget):
     def __init__(self,update_widget):
         super().__init__()
         self.jump_to_query = update_widget
         layout = QtWidgets.QGridLayout()
-        self.show_label = LabelComponent(14, "")
+        self.show_table = showtable()
         scroll = QtWidgets.QScrollArea()
-        scroll.setWidget(self.show_label)
+        scroll.setWidget(self.show_table)
         scroll.setWidgetResizable(True)
         previous_page = ButtonComponent("上一頁")
         previous_page.clicked.connect(lambda: self.jump_to_query('query'))
@@ -101,5 +98,25 @@ class Respone(QtWidgets.QWidget):
         pass
         
     def getInfo(self,parameters):
-        sys_info = str(parameters)
-        self.show_label.setText(sys_info)
+        self.show_table.refresh()
+        record_list = parameters
+        for index,record in enumerate(record_list):
+            self.show_table.insertRow(index)
+            for index_col,colnum in enumerate(self.show_table.horizontalHeader):
+                    self.show_table.setItem(index,index_col,QtWidgets.QTableWidgetItem(record[colnum]))
+        
+
+class showtable(QtWidgets.QTableWidget):
+    def __init__(self):
+        super().__init__()
+        self.horizontalHeader = ["img_binary","card_no","swipe_time","status","client_no"] 
+        self.refresh()
+        self.setEditTriggers(self.NoEditTriggers)
+        self.setColumnWidth(4,200)
+        self.setRowHeight(0,40)
+        
+    def refresh(self):
+        self.clear()
+        self.setColumnCount(len(self.horizontalHeader))
+        self.setHorizontalHeaderLabels(self.horizontalHeader)
+        self.setRowCount(0)

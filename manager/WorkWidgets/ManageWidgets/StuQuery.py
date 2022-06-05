@@ -13,7 +13,7 @@ class StuQuery(QtWidgets.QWidget):
         stuid_label = LabelComponent(16,"學號:")
         self.stuid_input = LineEditComponent("")
         query = ButtonComponent("查詢")
-        query.clicked.connect(self.query_action)
+        query.clicked.connect(lambda: self.query_action())
         
         layout.addWidget(stuid_label, 1,1,1,1)
         layout.addWidget(self.stuid_input, 1,2,1,1)
@@ -31,7 +31,8 @@ class StuQuery(QtWidgets.QWidget):
         self.setLayout(layout)
     
     def load(self):
-        pass
+        self.stuid_input.setText("")
+        self.show_label.setText("")
     
     def query_action(self):
         stuid = self.stuid_input.text()

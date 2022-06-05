@@ -80,32 +80,32 @@ class StuModify(QtWidgets.QWidget):
         self.confirm_botton.show()
     
     def delete_action(self):
-        stuid = {"student_id":self.StuId_input}
+        stuid = {"student_id":self.StuId_input.text()}
         self.execute_delete = ExecuteCommand(command='delete_stu',data=stuid)
         self.execute_delete.start()
-        self.execute_delete.return_sig.connect(self.delete_followUp)
+        self.execute_delete.return_sig.connect(self.delete_followup)
     
-    def delete_followup(self):
+    def delete_followup(self,response):
         response = json.loads(response)
         if response['status'] == 'OK':
-            pass
+            self.back_query("query")
         else:
-            pass
+            print("fail")
     
     def confirm_action(self):
         stu_info = {"student_id":self.StuId_input.text(),
                     "card_no":self.cardId_input.text(),
                     "student_name":self.name_input.text()}
-        self.execute_confirm = ExecuteCommand(command='modify',data=stu_info)
+        self.execute_confirm = ExecuteCommand(command='modify_stu',data=stu_info)
         self.execute_confirm.start()
-        self.execute_confirm.return_sig.connect(self.confirm_followUp)
+        self.execute_confirm.return_sig.connect(self.confirm_followup)
         
-    def confirm_followup(self):
+    def confirm_followup(self,response):
         response = json.loads(response)
         if response['status'] == 'OK':
-            pass
+            self.cancel()
         else:
-            pass
+            print("fail")
     
     def getinfo(self,student):
         self.StuId_input.setText(student['student_id'])

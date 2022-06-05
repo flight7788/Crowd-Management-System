@@ -8,11 +8,10 @@ class CardShow(QtWidgets.QWidget):
         super().__init__()
         self.setObjectName("show_stu_widget")
         layout = QtWidgets.QVBoxLayout()
-        header_label = LabelComponent(20, "Show Student")
-        self.show_label = LabelComponent(14, "")
+        header_label = LabelComponent(20, "Show Record")
+        self.show_table = showtable()
         scroll = QtWidgets.QScrollArea()
-
-        scroll.setWidget(self.show_label)
+        scroll.setWidget(self.show_table)
         scroll.setWidgetResizable(True)
         
         layout.addWidget(header_label, stretch=1)
@@ -20,21 +19,33 @@ class CardShow(QtWidgets.QWidget):
         self.setLayout(layout)
     
     def load(self):
-        self.execute_query = ExecuteCommand(command='show',data={})
+        date = {'start_time': '2022/06/01 00:00:00', 'end_time': '2022/06/30 23:59:59'}
+        self.execute_query = ExecuteCommand(command='query_logs',data=date)
         self.execute_query.start()
         self.execute_query.return_sig.connect(self.show_followUp)
         
     def show_followUp(self,response):
-        sys_info = ""
+        self.show_table.refresh()
         response = json.loads(response)
         if response['status'] == 'OK':
-            student_list = response['parameter']
-            sys_info +="\n  ==== student list ====\n"
-            for students in student_list:
-                sys_info +="    Name:{}\n".format(students['name'])
-                for subject, score in students['scores'].items():
-                    sys_info +="        subject: {}, score: {}\n".format(subject,score)
-            sys_info +="\n  ======================\n"
-        else:
-            sys_info = "Show is fail"
-        self.show_label.setText(sys_info)
+            record_list = response['data']
+            for index,record in enumerate(record_list):
+                print(index,record)
+                self.show_table.insertRow(index)
+                for index_col,colnum in enumerate(self.show_table.horizontalHeader):
+                    self.show_table.setItem(index,index_col,QtWidgets.QTableWidgetItem(record[colnum]))
+        
+class showtable(QtWidgets.QTableWidget):
+    def __init__(self):
+        super().__init__()
+        self.horizontalHeader = ["img_binary","card_no","swipe_time","status","client_no"]
+        self.refresh()
+        self.setEditTriggers(self.NoEditTriggers)
+        self.setColumnWidth(4,200)
+        self.setRowHeight(0,40)
+        
+    def refresh(self):
+        self.clear()
+        self.setColumnCount(len(self.horizontalHeader))
+        self.setHorizontalHeaderLabels(self.horizontalHeader)
+        self.setRowCount(0)
