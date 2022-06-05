@@ -4,4 +4,3 @@ opencv-python == 4.5.5.64
 mediapipe == 0.8.10
 protobuf == 3.19.0
 pyserial == 3.5
-

@@ -14,13 +14,14 @@ class ImageProcessor:
         self.current_img = None
 
     def showData(self, img):
-        self.Ny, self.Nx, _ = img.shape  
-        if(self.detect_face):
-            img, self.face_exist = self.detectFace(img)
         img = cv2.resize(img, (640, 480), interpolation=cv2.INTER_CUBIC)
+        self.Ny, self.Nx, _ = img.shape  
         self.current_img = img
-        img = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
-        qimg = QtGui.QImage(img.data, self.Nx, self.Ny, QtGui.QImage.Format_RGB888)
+
+        rgb_img = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
+        if(self.detect_face):
+            rgb_img, self.face_exist = self.detectFace(rgb_img)
+        qimg = QtGui.QImage(rgb_img.data, self.Nx, self.Ny, QtGui.QImage.Format_RGB888)
         self.viewData.setPixmap(QtGui.QPixmap.fromImage(qimg))
 
     def encodeImg(self, img):
@@ -31,14 +32,13 @@ class ImageProcessor:
 
     def detectFace(self, img):
         color = (0, 255, 0)  
-        rgbImg = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
-        res = mpFacedetection.process(rgbImg)
+        res = mpFacedetection.process(img)
         exist = False
         if res.detections:
             exist = True
             for _, dectection in enumerate(res.detections):
                 box = dectection.location_data.relative_bounding_box
-                h, w, c = rgbImg.shape
+                h, w, c = img.shape
                 my_box = int(box.xmin * w), int(box.ymin * h), \
                          int(box.width * w), int(box.height * h) 
                 cv2.rectangle(img, my_box, color, 2)
