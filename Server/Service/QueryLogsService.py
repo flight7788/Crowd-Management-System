@@ -18,20 +18,21 @@ class QueryLogs(MessageProcessor):
                 
             result = StudentLog().get_logs()
             logs = result['data']   
-            filter_data = dict()
+            sorted_key = sorted([int(x) for x in logs.keys()])
+            filter_data = list()
             
-            for key, value in logs.items():
+            for key in sorted_key:
+                key = str(key)
                 try:
-                    print(value['swipe_time'])
-                    swipe_time = datetime.strptime(value['swipe_time'],'%Y/%m/%d %H:%M:%S')
+                    swipe_time = datetime.strptime(logs[key]['swipe_time'],'%Y/%m/%d %H:%M:%S')
                     if swipe_time>= start_time and swipe_time <= end_time :
-                        filter_data[key] = value
+                        filter_data.append(logs[key])
                     
                 except Exception as e:
                     print('Ignore : Parse SwipeDateTime Error, {} , date id is {}'.format(e,key))
                     pass
             
-            if result['is_success'] and len(logs)>0 :
+            if result['is_success'] and len(filter_data)>0 :
                 return self.return_success_with_data(filter_data)
             
             else :

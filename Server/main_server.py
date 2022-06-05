@@ -1,5 +1,6 @@
 from Component.FireStore.FireStoreConnector import FireStoreInitializer
 from Component.SocketServer import SocketServer
+from Component.MessageProcessor import MessageProcessor
 from Service.QueryStuService import QueryStu
 from Service.QueryCardService import QueryCard
 from Service.SwipeService import Swipe
@@ -30,19 +31,22 @@ FUNCTION_METHOD = {
 }
 
 def receive_handler(messages):
-    cmd = messages['command']
-    params = messages['parameter']
     
+    cmd = messages['command'] if 'command' in messages else ''
+    
+    params = messages['parameters'] if 'parameters' in messages else {}
+    params = messages['parameter'] if 'parameter' in messages else params
+    
+    if cmd not in FUNCTION_METHOD:
+        return MessageProcessor().return_fail_with_reason('command:{} is not exists'.format(cmd))
     try:
-        
         message = FUNCTION_METHOD[cmd]().execute(params)
         print('Server Response # : {}'.format(message))
         return message
-    
-    except  Exception as e:
 
-        print('{}'.format(e))
-        return {'status':'FAIL','data' : '{}'.format(e)}
+    except  Exception as e:
+        print('Exception occured : {}'.format(e))
+        return MessageProcessor().return_fail_with_reason('Exception occured : {}'.format(e))
 
 def main():
     
