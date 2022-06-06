@@ -11,7 +11,7 @@ class HomeWidget(QtWidgets.QWidget):
         layout = QtWidgets.QVBoxLayout()
         function_layout = QtWidgets.QHBoxLayout()
         
-        header_label = LabelComponent(24,"人員進出紀錄管理系統")
+        header_label = LabelComponent(28,"人員進出紀錄管理系統")
         person_botton = ButtonComponent("人員管理")
         tapcard_botton = ButtonComponent("刷卡報表")
         person_botton.clicked.connect(lambda: self.update_widget_callback("ManageStu"))
@@ -20,26 +20,23 @@ class HomeWidget(QtWidgets.QWidget):
         header_label.setAlignment(QtCore.Qt.AlignHCenter)
         header_label.setStyleSheet("""
             color: rgb(255, 255, 255);
-            border: 1px solid rgb(255, 255, 255)
+            border: 3px solid rgb(255, 255, 255);
+            border-radius: 5px;
             """)
         person_botton.setObjectName('person_botton')
         person_botton.setStyleSheet(
             """
             QPushButton#person_botton {
-                background-color: #2B5DD1;
+                background-color: none;
                 color: #FFFFFF;
-                border-style: outset;
+                border: 5px solid rgb(255, 255, 255);
+                border-radius: 10px;
                 padding: 100px;
                 font: bold 40px;
-                border-width: 6px;
-                border-radius: 10px;
-                border-color: #2752B8;
             }
             QPushButton#person_botton:hover {
-                background-color: lightgreen;
-            }
-            QPushButton#person_botton:pressed {
-                background-color: lightgreen;
+                background-color: rgb(255,255,255);
+                color: black;
             }
             """
         )
@@ -47,20 +44,16 @@ class HomeWidget(QtWidgets.QWidget):
         tapcard_botton.setStyleSheet(
             """
             QPushButton#tapcard_botton {
-                background-color: #2B5DD1;
+                background-color: none;
                 color: #FFFFFF;
-                border-style: outset;
+                border: 5px solid rgb(255, 255, 255);
+                border-radius: 10px;
                 padding: 100px;
                 font: bold 40px;
-                border-width: 6px;
-                border-radius: 10px;
-                border-color: #2752B8;
             }
             QPushButton#tapcard_botton:hover {
-                background-color: lightgreen;
-            }
-            QPushButton#tapcard_botton:pressed {
-                background-color: lightgreen;
+                background-color: rgb(255, 255, 255);
+                color: black;
             }
             """
         )

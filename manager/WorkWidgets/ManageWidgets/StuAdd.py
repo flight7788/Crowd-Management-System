@@ -44,12 +44,13 @@ class StuAdd(QtWidgets.QWidget):
         self.cardid_input.setText("")
     
     def add(self):
-        stu_info = {'student_id': self.stuid_input.text(),
-                    'card_no': self.cardid_input.text(),
-                    'student_name': self.name_input.text()}
-        self.execute_query = ExecuteCommand(command='add_stu',data=stu_info)
-        self.execute_query.start()
-        self.execute_query.return_sig.connect(self.add_followUp)
+        if (self.name_input.text() and self.stuid_input.text() and self.cardid_input.text()):
+            stu_info = {'student_id': self.stuid_input.text(),
+                        'card_no': self.cardid_input.text(),
+                        'student_name': self.name_input.text()}
+            self.execute_query = ExecuteCommand(command='add_stu',data=stu_info)
+            self.execute_query.start()
+            self.execute_query.return_sig.connect(self.add_followUp)
     
     def add_followUp(self,response):
         response = json.loads(response)
