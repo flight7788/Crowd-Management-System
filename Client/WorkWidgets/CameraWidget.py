@@ -13,8 +13,8 @@ class CameraWidget(QtWidgets.QWidget):
     def __init__(self):
         super().__init__()
         self.setObjectName("camera_widget")
-        self.MyReader = None
-        self.ProcessCam = None
+        self.MyReader = CardReader()
+        self.ProcessCam = Camera()
         self.SocketClient = None
         
         self.my_setting = {}
@@ -49,83 +49,95 @@ class CameraWidget(QtWidgets.QWidget):
     def setNewSetting(self, new_setting: dict):
         self.my_setting = new_setting
         
-    def readerCallEvent(self, data):
-        if self.SocketClient != None and self.server_processor.checkWithServer(data) and \
-                self.image_processor.face_exist:
-            t = time.localtime()
-            date_time = time.strftime("%Y/%m/%d %H:%M:%S", t)
-            recv_data = self.server_processor.sendPassToServer(data, \
-                                                date_time, \
-                                                self.image_processor.encodeImg(self.image_processor.current_img))
-            if recv_data != False:
-                self.status_widget.showPass('Enter' if recv_data['status']=='in' else 'Leave')
-                self.status_widget.Name_val_label.setText(recv_data['student_name'])
-                self.status_widget.ID_val_label.setText(recv_data['student_id'])
-                self.MyReader.sendPass()
-            else:
-                self.status_widget.showFail()
+    def readerCallEvent(self, card_no):
+        if self.SocketClient == None:
+            self.status_widget.showFail('No server set up !!')
+            self.MyReader.sendFail()
+        else:    
+            if self.server_processor.checkWithServer(card_no) == False:
+                self.status_widget.showFail('Card No. is not exist !!')
                 self.MyReader.sendFail()
-        else:
-          self.MyReader.sendFail()
-          self.status_widget.showFail()
+            else:
+                if self.image_processor.face_exist:
+                    t = time.localtime()
+                    date_time = time.strftime("%Y/%m/%d %H:%M:%S", t)
+                    self.server_processor.sendPassToServer(card_no, date_time, 
+                        self.image_processor.encodeImg(self.image_processor.current_img))
+                else:
+                    self.status_widget.showFail('No face in screen !!')
+                    self.MyReader.sendFail()
     
     def stuID_lineEditEvent(self, event):
         self.menu_widget.checkIn_button.setDisabled(False)
         self.menu_widget.checkOut_button.setDisabled(False)
 
     def manualEnterEvent(self):
-        if self.SocketClient != None and self.MyReader != None:
-            if self.menu_widget.stu_ID_lineEdit.text() != '' and \
-                self.image_processor.face_exist:
-                t = time.localtime()
-                date_time = time.strftime("%Y/%m/%d %H:%M:%S", t)
-                recv_data = self.server_processor.sendManualPassToServer(
+        if self.SocketClient == None:
+            self.MyReader.sendFail()
+            self.status_widget.showFail('No server set up !!')
+        else:    
+            if self.menu_widget.stu_ID_lineEdit.text() == '':
+                self.MyReader.sendFail()
+                self.status_widget.showFail('ID is empty !!')
+            else:
+                if self.image_processor.face_exist:
+                    t = time.localtime()
+                    date_time = time.strftime("%Y/%m/%d %H:%M:%S", t)
+                    self.server_processor.sendManualPassToServer(
                         self.menu_widget.stu_ID_lineEdit.text(), 
                         date_time,
                         self.image_processor.encodeImg(self.image_processor.current_img),
                         'in')
-
-                if recv_data != False:
-                    self.MyReader.sendPass()
-                    self.status_widget.showPass('Enter')
-                    self.status_widget.Name_val_label.setText(recv_data)
-                    self.status_widget.ID_val_label.setText(self.menu_widget.stu_ID_lineEdit.text())
                 else:
                     self.MyReader.sendFail()
-                    self.status_widget.showFail()
-            else:
-                self.MyReader.sendFail()
-                self.status_widget.showFail()
+                    self.status_widget.showFail('No face in screen !!')
         self.menu_widget.checkIn_button.setDisabled(True)
         self.menu_widget.checkOut_button.setDisabled(True)
         self.menu_widget.stu_ID_lineEdit.setText('')
           
     def manualLeaveEvent(self):
-        if self.SocketClient != None and self.MyReader != None:
-            if self.menu_widget.stu_ID_lineEdit.text() != '' and \
-                self.image_processor.face_exist:
-                t = time.localtime()
-                date_time = time.strftime("%Y/%m/%d %H:%M:%S", t)
-                recv_data = self.server_processor.sendManualPassToServer(
+        if self.SocketClient == None:
+            self.MyReader.sendFail()
+            self.status_widget.showFail('No server set up !!')
+        else:    
+            if self.menu_widget.stu_ID_lineEdit.text() == '':
+                self.MyReader.sendFail()
+                self.status_widget.showFail('ID is empty !!')
+            else:
+                if self.image_processor.face_exist:
+                    t = time.localtime()
+                    date_time = time.strftime("%Y/%m/%d %H:%M:%S", t)
+                    self.server_processor.sendManualPassToServer(
                         self.menu_widget.stu_ID_lineEdit.text(), 
                         date_time,
                         self.image_processor.encodeImg(self.image_processor.current_img),
                         'out')
-                if recv_data != False:
-                    self.MyReader.sendPass()
-                    self.status_widget.showPass('Leave')
-                    self.status_widget.Name_val_label.setText(recv_data)
-                    self.status_widget.ID_val_label.setText(self.menu_widget.stu_ID_lineEdit.text())
                 else:
                     self.MyReader.sendFail()
-                    self.status_widget.showFail()
-            else:
-                self.MyReader.sendFail()
-                self.status_widget.showFail()
+                    self.status_widget.showFail('No face in screen !!')
         self.menu_widget.checkIn_button.setDisabled(True)
         self.menu_widget.checkOut_button.setDisabled(True)
         self.menu_widget.stu_ID_lineEdit.setText('')
-    
+        
+    def showResultFromReader(self, student_name, student_id, status):
+        self.status_widget.showPass('Enter' if status =='in' else 'Leave')
+        self.status_widget.Name_val_label.setText(student_name)
+        self.status_widget.ID_val_label.setText(student_id)
+        self.MyReader.sendPass()
+
+    def showResultByManual(self, student_name, status):
+        self.status_widget.showPass('Enter' if status == 'in' else 'Leave')
+        self.status_widget.Name_val_label.setText(student_name)
+        self.status_widget.ID_val_label.setText(self.menu_widget.stu_ID_lineEdit.text())
+        self.MyReader.sendPass()
+
+    def ShowFailFromServer(self, reason):
+        if reason == 'not exist':
+            self.status_widget.showFail('Your ID is invalid !!')
+        else:
+            self.status_widget.showFail()
+        self.MyReader.sendFail()
+
     def load(self):
         if self.my_setting != {}:
             if self.my_setting['COM'] != None:
@@ -148,6 +160,9 @@ class CameraWidget(QtWidgets.QWidget):
             if self.my_setting['Server'] != None:
                 self.SocketClient = self.my_setting['Server']
                 self.server_processor =  ServerProcessor(self.SocketClient)
+                self.server_processor.sendPassToServer_sig.connect(self.showResultFromReader)
+                self.server_processor.sendManualPassToServer_sig.connect(self.showResultByManual)
+                self.server_processor.fail_sig.connect(self.ShowFailFromServer)
         self.menu_widget.checkIn_button.setDisabled(True)
         self.menu_widget.checkOut_button.setDisabled(True)
     
@@ -212,7 +227,7 @@ class StatusWidget(QtWidgets.QWidget):
         self.msg_val_label.setGeometry(QtCore.QRect(0, 0, 400, 200))
         self.msg_val_label.setMinimumSize(QtCore.QSize(400, 200))
         self.msg_val_label.setAlignment(Qt.AlignCenter) 
-        self.msg_val_label.setStyleSheet("color: rgb(255, 255, 255); border: 3px solid rgb(120, 157, 186)")
+        self.msg_val_label.setStyleSheet("color: rgb(255, 255, 255); border: 3px solid rgb(120, 157, 186); padding: 5px;")
 
         layout.addWidget(Date_label, 0, 0, 1, 1)   
         layout.addWidget(self.Date_val_label, 0, 1, 1, 3)  
@@ -256,10 +271,10 @@ class StatusWidget(QtWidgets.QWidget):
             self.msg_val_label.setText('You can leave school now !!')
         self.Status_ShowTime = 0
 
-    def showFail(self):
+    def showFail(self, status='Problem occur !!'):
         self.Status_val_label.setText('FAIL')
         self.Status_val_label.setStyleSheet('background-color:rgb(255,0,0)')
-        self.msg_val_label.setText('Problem occur !!')
+        self.msg_val_label.setText(status)
         self.Name_val_label.setText('')
         self.ID_val_label.setText('')
         self.Status_ShowTime = 0
