@@ -163,6 +163,8 @@ class CameraWidget(QtWidgets.QWidget):
                 self.server_processor.sendPassToServer_sig.connect(self.showResultFromReader)
                 self.server_processor.sendManualPassToServer_sig.connect(self.showResultByManual)
                 self.server_processor.fail_sig.connect(self.ShowFailFromServer)
+                self.server_processor.start_waiting()
+                self.server_processor.start()
         self.menu_widget.checkIn_button.setDisabled(True)
         self.menu_widget.checkOut_button.setDisabled(True)
     
@@ -172,6 +174,7 @@ class CameraWidget(QtWidgets.QWidget):
         if(self.ProcessCam != None and self.ProcessCam.connect):
             self.ProcessCam.close()
         if(self.SocketClient != None):
+            self.server_processor.stop_waiting()
             self.SocketClient.client_socket.close()
 
 
