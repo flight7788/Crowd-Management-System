@@ -1,9 +1,11 @@
 from PyQt5 import QtWidgets, QtGui, QtCore
 from PyQt5.QtCore import Qt
 from WorkWidgets.WidgetComponents import LabelComponent, LineEditComponent, ButtonComponent
+
 from Camera.MyCamera import Camera
 from CardReader.MyCardReader import CardReader
 from SocketClient.MySocketClient import SocketClient
+
 
 class SettingWidget(QtWidgets.QWidget):
     def __init__(self):

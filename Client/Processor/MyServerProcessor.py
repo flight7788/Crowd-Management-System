@@ -4,7 +4,7 @@ class ServerProcessor():
     def __init__(self, socketClient: SocketClient):
         self.socket_client = socketClient
 
-    def checkWithServer(self, card_no: str):
+    def checkCardWithServer(self, card_no: str):
         self.socket_client.send_command('query_card', {'card_no':card_no})
         recv_data = self.socket_client.wait_response()
         if recv_data['status'] == 'OK':   
@@ -35,3 +35,10 @@ class ServerProcessor():
             return False
         return recv_data['data']['student_name']
     
+    def checkStuWithServer(self, student_id: str):
+        self.socket_client.send_command('query_stu', { 'student_id': student_id })    
+        recv_data = self.socket_client.wait_response()
+        if recv_data['status'] != 'OK':
+            print('manual_check:{}'.format(recv_data['status']))
+            return False
+        return recv_data['data']

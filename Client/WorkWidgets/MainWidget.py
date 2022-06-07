@@ -5,13 +5,16 @@ from PyQt5.QtCore import Qt
 from WorkWidgets.WidgetComponents import LabelComponent, LineEditComponent, ButtonComponent
 from WorkWidgets.CameraWidget import CameraWidget
 from WorkWidgets.SettingWidget import SettingWidget
+from WorkWidgets.CurrentLogWidget import CurrentLogWidget
 
 class MainWidget(QtWidgets.QWidget):
     def __init__(self):
         super().__init__()
         self.setObjectName("main_widget")
 
-        function_widget = FunctionWidget({'camera': CameraWidget(), 'setting': SettingWidget()})
+        function_widget = FunctionWidget({'camera': CameraWidget(), 
+                                          'setting': SettingWidget(),
+                                          'currentLog': CurrentLogWidget()})
         function_widget.widget_dict['camera'].detect_face = True
 
         menu_widget = MenuWidget(function_widget)
@@ -46,7 +49,7 @@ class MenuWidget(QtWidgets.QWidget):
         self.currentLog_button.setIconSize(QtCore.QSize(50,50))
 
         self.setting_button.clicked.connect(self.settingButtonCallback)
-        #stop_button.clicked.connect()
+        self.currentLog_button.clicked.connect(self.currentLogButtonCallback)
 
         layout.addWidget(self.setting_button, stretch=1)
         layout.addWidget(self.currentLog_button, stretch=1)
@@ -68,7 +71,24 @@ class MenuWidget(QtWidgets.QWidget):
             self.currentLog_button.setDisabled(False)
             self.func_widget.widget_dict['setting'].disconnectAll()
             self.func_widget.widget_dict['camera'].setNewSetting(self.func_widget.widget_dict['setting'].getNewSetting())
+            self.func_widget.widget_dict['currentLog'].setNewSetting(self.func_widget.widget_dict['setting'].getNewSetting())
             self.func_widget.updateWidget('camera')
+
+    def currentLogButtonCallback(self):
+        if(self.currentLog_button.text() == ' Current log'):
+            self.currentLog_button.setText(' Return')
+            self.currentLog_button.setIcon(QtGui.QIcon('./icon/return.png'))
+            self.currentLog_button.setIconSize(QtCore.QSize(50,50))
+            self.setting_button.setDisabled(True)
+            self.func_widget.updateWidget('currentLog')
+        else:
+            self.currentLog_button.setText(' Current log')
+            self.currentLog_button.setIcon(QtGui.QIcon('./icon/server.png'))
+            self.currentLog_button.setIconSize(QtCore.QSize(50,50))
+            self.setting_button.setDisabled(False)
+            self.func_widget.updateWidget('camera')
+
+
 
 
 class FunctionWidget(QtWidgets.QStackedWidget):
