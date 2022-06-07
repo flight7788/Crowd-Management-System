@@ -14,14 +14,16 @@ class QueryStu(MessageProcessor):
             if not result['is_success'] :
                 return self.return_fail_with_reason(result['message'])
             
-            
+            student_name = result['data']['student_name']
             card_no = result['data']['card_no']
             result = StudentLog().get_logs_by_card_no(card_no=card_no)
             sorted_key = sorted([int(x) for x in result['data'].keys()])
             result_list = list()
             
             for key in sorted_key:
-                result_list.append(result['data'][str(key)])
+                log = result['data'][str(key)]
+                log['student_name'] = student_name
+                result_list.append(log)
 
             if result['is_success'] and len(result_list)>0 :
                 return self.return_success_with_data(result_list)

@@ -1,6 +1,7 @@
 from Component.FireStore.FireStoreConnector import FireStoreInitializer
 from Component.SocketServer import SocketServer
 from Component.MessageProcessor import MessageProcessor
+from Service.QueryImgBinaryService import QueryImgBinary
 from Service.QueryStuService import QueryStu
 from Service.QueryCardService import QueryCard
 from Service.SwipeService import Swipe
@@ -11,6 +12,7 @@ from Service.DeleteStuService import DeleteStu
 from Service.ModifyStuService import ModifyStu
 from Service.QueryAllStuService import QueryAllStu
 from Service.QueryLogsService import QueryLogs
+from Service.QueryImgBinaryService import QueryImgBinary
 
 FIRESTORE_KEYCHAIN = "connection_info.json"
 HOST = "140.124.39.131"
@@ -27,7 +29,8 @@ FUNCTION_METHOD = {
       'delete_stu' : DeleteStu,
       'modify_stu' : ModifyStu,
       'query_all_stu' : QueryAllStu,
-      'query_logs' : QueryLogs
+      'query_logs' : QueryLogs,
+      'query_image_binary' : QueryImgBinary
 }
 
 def receive_handler(messages):
