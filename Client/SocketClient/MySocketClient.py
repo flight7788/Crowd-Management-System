@@ -1,7 +1,7 @@
 import socket 
 import json
 
-BUFFER_SIZE = 1940
+BUFFER_SIZE = 20000
 
 class SocketClient:
     def __init__(self, host, port):
