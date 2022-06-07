@@ -3,7 +3,7 @@ import json
 
 host = "127.0.0.1"
 port = 20001
-BUFFER_SIZE = 20000
+BUFFER_SIZE = 20000000
 
 class SocketClient:
     def __init__(self,host,port):

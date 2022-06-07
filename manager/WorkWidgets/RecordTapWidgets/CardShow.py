@@ -1,14 +1,14 @@
 from PyQt5 import QtWidgets,QtCore,QtGui
 from WorkWidgets.WidgetComponents import LabelComponent, LineEditComponent, ButtonComponent
 from WorkWidgets.SocketClient.ClientControl import ExecuteCommand
-import datetime
-import json
+from WorkWidgets.RecordTapWidgets.ImageProcessor import ImageProcessor
+import datetime,os,json
 
 class CardShow(QtWidgets.QWidget):
     def __init__(self):
         super().__init__()
         self.setObjectName("show_stu_widget")
-        self.calendar = ShortDatetimeEdit(self.custom_followUP)
+        self.calendar = CalendarView(self.custom_followUP)
         layout = QtWidgets.QVBoxLayout()
         functiom_layout = QtWidgets.QHBoxLayout()
         one_day_button = ButtonComponent("past day")
@@ -39,21 +39,30 @@ class CardShow(QtWidgets.QWidget):
         self.execute_query = ExecuteCommand(command='query_logs',data=date)
         self.execute_query.start()
         self.execute_query.return_sig.connect(self.show_followUp)
-        self.mod = "all_stu"
         
     def show_followUp(self,response):
         self.show_table.refresh()
+        self.img_button_list = list()
         response = json.loads(response)
         if response['status'] == 'OK':
             record_list = response['data']
+            img_binary_list = list()
+            for record in record_list:
+                img_binary_list.append(record['img_binary'])
             for index,record in enumerate(record_list):
-                print(index,record)
                 self.show_table.insertRow(index)
-                for index_col,colnum in enumerate(self.show_table.horizontalHeader):
-                    self.show_table.setItem(index,index_col,QtWidgets.QTableWidgetItem(record[colnum]))
-    
+                self.img_button_list.append(ButtonComponent(""))
+                self.img_button_list[index].clicked.connect(lambda: self.img_button_action(img_binary_list))
+                self.img_button_list[index].setIcon(QtGui.QIcon('./icon/img_detail.png'))
+                self.img_button_list[index].setIconSize(QtCore.QSize(30,30))
+                self.img_button_list[index].setObjectName("img_button_list {}".format(index))
+                self.show_table.setCellWidget(index,0, self.img_button_list[index])
+                collist = self.show_table.horizontalHeader
+                for index_col,colnum in enumerate(collist):
+                    if not index_col == 0:
+                        self.show_table.setItem(index,index_col,QtWidgets.QTableWidgetItem(record[colnum]))
+        
     def call_back_action(self,parameters):
-        self.mod = "personal"
         self.show_followUp(parameters)
        
     def past_day_action(self):
@@ -76,6 +85,42 @@ class CardShow(QtWidgets.QWidget):
     def custom_followUP(self,stare_time,end_time):
         self.show_logs(stare_time,end_time)
         
+    def img_button_action(self,img_binary_list):
+        sending_button = str(self.sender().objectName())
+        index =int(sending_button.split()[-1])
+        self.query_img_action(img_binary_list[index])
+        
+    def query_img_action(self,img_binary):
+        data = {'file_name':img_binary}
+        self.execute_query = ExecuteCommand(command='query_image_binary',data=data)
+        self.execute_query.start()
+        self.execute_query.return_sig.connect(self.query_img_followUp)
+    
+    def query_img_followUp(self,response):
+        response_ = json.loads(response)
+        print(type(response_))
+        image_widget = ImageWidget(response_["data"])
+        image_widget.show()
+        
+class ImageWidget(QtWidgets.QMainWindow):
+    def __init__(self,image):
+        super().__init__()
+        decode = ImageProcessor(image)
+        self.picture = decode.decodeImg()
+        
+        self.setWindowTitle("Picture")
+        self.central_widget = QtWidgets.QWidget()
+        self.setCentralWidget(self.central_widget)
+        layout = QtWidgets.QVBoxLayout(self.central_widget)
+        image_label = QtWidgets.QLabel(self)
+        pixmap = QtGui.QPixmap(self.picture)
+        image_label.setPixmap(pixmap)
+        self.resize(pixmap.width(), pixmap.height())
+        layout.addWidget(image_label)
+        
+    def closeEvent(self, event):
+        event.accept()
+        os.remove(self.picture)
 
 class showtable(QtWidgets.QTableWidget):
     def __init__(self):
@@ -85,7 +130,7 @@ class showtable(QtWidgets.QTableWidget):
         self.setEditTriggers(self.NoEditTriggers)
         self.setStyleSheet("""QTableWidget::item{color:white};
                                         font: bold 10px;
-                                        background-color: rgb(144, 144, 144)""")
+                                        background-color: rgb(33, 43, 51)""")
         
     def refresh(self):
         self.clear()
@@ -93,9 +138,9 @@ class showtable(QtWidgets.QTableWidget):
         self.setHorizontalHeaderLabels(self.horizontalHeader)
         self.setRowCount(0)
         
-class ShortDatetimeEdit(QtWidgets.QWidget):
+class CalendarView(QtWidgets.QWidget):
     def __init__(self,call_back_time):
-        super(ShortDatetimeEdit, self).__init__()
+        super().__init__()
         self.StartClicked = True
         self.EndClicked = False
         self.date =""
@@ -161,7 +206,6 @@ class ShortDatetimeEdit(QtWidgets.QWidget):
         self.show()
     
     def GetDate(self, date):
-        print(date)
         self.date = date.toString("yyyy/MM/dd")
         if self.StartClicked:
             self.get_start_lineEdit.setText(self.date)
@@ -178,7 +222,6 @@ class ShortDatetimeEdit(QtWidgets.QWidget):
         warning = ""
         start_date = self.get_start_lineEdit.text()
         end_date = self.get_end_lineEdit.text()
-        print(start_date,end_date)
         if not start_date:
             warning = "start_time didn't select"
         if not end_date:
