@@ -32,7 +32,7 @@ and have the record that can be output as a CSV file.
 
 ## System diagram
 
-    
+![Project Image](https://github.com/flight7788/Crowd-Management-System/blob/main/SystemDiagram.png)    
 
 [Back To The Top](#Crowd-Management-System)
 
