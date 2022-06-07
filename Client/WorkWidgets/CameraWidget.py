@@ -110,8 +110,7 @@ class CameraWidget(QtWidgets.QWidget):
                     recv_data = self.server_processor.sendManualPassToServer(
                         self.menu_widget.stu_ID_lineEdit.text(), 
                         date_time,
-                        self.image_processor.encodeImg(self.image_processor.current_img),
-                        'in')
+                        self.image_processor.encodeImg(self.image_processor.current_img), 'in')
                     if recv_data != False:
                         self.MyReader.sendPass()
                         self.status_widget.showPass('Enter')
@@ -136,8 +135,7 @@ class CameraWidget(QtWidgets.QWidget):
                     recv_data = self.server_processor.sendManualPassToServer(
                         self.menu_widget.stu_ID_lineEdit.text(), 
                         date_time,
-                        self.image_processor.encodeImg(self.image_processor.current_img),
-                        'out')
+                        self.image_processor.encodeImg(self.image_processor.current_img), 'out')
                     if recv_data != False:
                         self.MyReader.sendPass()
                         self.status_widget.showPass('Leave')

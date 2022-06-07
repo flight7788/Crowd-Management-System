@@ -209,8 +209,7 @@ class IPWidget(QtWidgets.QFrame):
         self.setLayout(layout)
         self.setStyleSheet("QLineEdit { border: none; color: rgb(255, 255, 255)}" \
                            "QLabel { border: none; color: rgb(255, 255, 255)}" \
-                           "QFrame { border: 1px solid rgb(255, 255, 255) }" \
-                        )
+                           "QFrame { border: 1px solid rgb(255, 255, 255) }" )
                             
     def eventFilter(self, source, event):
         if event.type() == QtCore.QEvent.KeyPress:
@@ -227,7 +226,7 @@ class IPWidget(QtWidgets.QFrame):
                              event.key() == 16777236)):
                             newIndex = str(int(addr_name[-1]) + 1)
                             self.IP_lineEdit['subAddr' + newIndex].setFocus()
-            print(event.key(),event.text())
+            #print(event.key(),event.text())
         return super().eventFilter(source, event)
     
     def validateIP(self):
@@ -273,8 +272,7 @@ class PortWidget(QtWidgets.QFrame):
         layout.setContentsMargins(10, 0, 10, 0)
         self.setLayout(layout)
         self.setStyleSheet("QLineEdit { border: none; color: rgb(255, 255, 255)}" \
-                           "QFrame { border: 1px solid rgb(255, 255, 255) }" \
-                        )
+                           "QFrame { border: 1px solid rgb(255, 255, 255) }")
     
     def validatePort(self):
         my_port = self.Port_lineEdit.text()
