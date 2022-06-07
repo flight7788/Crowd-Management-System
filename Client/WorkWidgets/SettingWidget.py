@@ -227,7 +227,7 @@ class IPWidget(QtWidgets.QFrame):
                              event.key() == 16777236)):
                             newIndex = str(int(addr_name[-1]) + 1)
                             self.IP_lineEdit['subAddr' + newIndex].setFocus()
-            #print(event.key())
+            print(event.key(),event.text())
         return super().eventFilter(source, event)
     
     def validateIP(self):

@@ -34,11 +34,12 @@ class HeaderWidget(QtWidgets.QWidget):
         self.backhome = backhome
         layout = QtWidgets.QHBoxLayout()
         header_label = LabelComponent(16,"刷卡報表")
-        backhome_botton = ButtonComponent("首頁")
+        backhome_botton = ButtonComponent("Home")
         backhome_botton.clicked.connect(lambda: self.backhome("home"))
         
         backhome_botton.setIcon(QtGui.QIcon('./icon/home.png'))
         backhome_botton.setIconSize(QtCore.QSize(25,25))
+        backhome_botton.setObjectName('backhome_botton')
         
         layout.addWidget(header_label)
         layout.addStretch()
@@ -67,9 +68,10 @@ class MenuWidget(QtWidgets.QWidget):
 class FunctionWidget(QtWidgets.QStackedWidget):
     def __init__(self):
         super().__init__()
+        self.cardshow = CardShow()
         self.widget_dict = {
-            "show": self.addWidget(CardShow()),
-            "query": self.addWidget(CardQuery()),
+            "show": self.addWidget(self.cardshow),
+            "query": self.addWidget(CardQuery(self.update_widget,self.cardshow.call_back_action)),
         }
         self.update_widget("query")
     

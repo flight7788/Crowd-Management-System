@@ -6,54 +6,21 @@ from WorkWidgets.SocketClient.ClientControl import ExecuteCommand
 import json
 
 class CardQuery(QtWidgets.QWidget):
-    def __init__(self):
-        super().__init__()
-        layout = QtWidgets.QVBoxLayout()
-        self.stack_widget = stackWidget()
-        layout.addWidget(self.stack_widget)
-        self.setLayout(layout)
-        
-    def load(self):
-        self.stack_widget.update_widget("query")
-    
-class stackWidget(QtWidgets.QStackedWidget):
-    def __init__(self):
-        super().__init__()
-        self.respone = Respone(self.update_widget)
-        self.widget_dict = {
-            "query": self.addWidget(Query(self.update_widget,self.respone.getInfo)),
-            "respone": self.addWidget(self.respone),
-        }
-        self.update_widget("query")
-    
-    def update_widget(self, name):
-        self.setCurrentIndex(self.widget_dict[name])
-        current_widget = self.currentWidget()
-        current_widget.load()
-
-class Query(QtWidgets.QWidget):
     def __init__(self,update_widget,respone_callback):
         super().__init__()
         self.update_widget = update_widget
         self.respone_callback = respone_callback
-        layout = QtWidgets.QGridLayout()
+        layout = QtWidgets.QHBoxLayout()
         
         stuid_label = LabelComponent(16,"學號:")
         self.stuid_input = LineEditComponent("")
-        query = ButtonComponent("查詢")
-        query.clicked.connect(self.query_action)
+        query_button = ButtonComponent("查詢")
+        query_button.clicked.connect(self.query_action)
         
-        layout.addWidget(stuid_label, 1,1,1,1)
-        layout.addWidget(self.stuid_input, 1,2,1,1)
-        layout.addWidget(query, 1,3,1,1)
-        layout.setColumnStretch(0, 2)
-        layout.setColumnStretch(1, 2)
-        layout.setColumnStretch(2, 3)
-        layout.setColumnStretch(3, 1)
-        layout.setColumnStretch(4, 2)
-        layout.setRowStretch(0, 2)
-        layout.setRowStretch(1, 2)
-        layout.setRowStretch(2, 6)
+        layout.addWidget(stuid_label)
+        layout.addWidget(self.stuid_input)
+        layout.addWidget(query_button)
+        layout.addStretch()
         self.setLayout(layout)
     
     def load(self):
@@ -70,53 +37,5 @@ class Query(QtWidgets.QWidget):
     def query_followUp(self,response):
         response = json.loads(response)
         if response['status'] == 'OK':
-            self.respone_callback(response['data'])
-            self.update_widget('respone')
-            
-class Respone(QtWidgets.QWidget):
-    def __init__(self,update_widget):
-        super().__init__()
-        self.jump_to_query = update_widget
-        layout = QtWidgets.QGridLayout()
-        self.show_table = showtable()
-        scroll = QtWidgets.QScrollArea()
-        scroll.setWidget(self.show_table)
-        scroll.setWidgetResizable(True)
-        previous_page = ButtonComponent("上一頁")
-        previous_page.clicked.connect(lambda: self.jump_to_query('query'))
-        
-        layout.addWidget(scroll, 0,0,1,3)
-        layout.addWidget(previous_page, 1,1,1,1)
-        layout.setColumnStretch(0,4)
-        layout.setColumnStretch(1,2)
-        layout.setColumnStretch(2,4)
-        layout.setRowStretch(0,9)
-        layout.setRowStretch(1,1)
-        self.setLayout(layout)
-    
-    def load(self):
-        pass
-        
-    def getInfo(self,parameters):
-        self.show_table.refresh()
-        record_list = parameters
-        for index,record in enumerate(record_list):
-            self.show_table.insertRow(index)
-            for index_col,colnum in enumerate(self.show_table.horizontalHeader):
-                    self.show_table.setItem(index,index_col,QtWidgets.QTableWidgetItem(record[colnum]))
-        
-
-class showtable(QtWidgets.QTableWidget):
-    def __init__(self):
-        super().__init__()
-        self.horizontalHeader = ["img_binary","card_no","swipe_time","status","client_no"] 
-        self.refresh()
-        self.setEditTriggers(self.NoEditTriggers)
-        self.setColumnWidth(4,200)
-        self.setRowHeight(0,40)
-        
-    def refresh(self):
-        self.clear()
-        self.setColumnCount(len(self.horizontalHeader))
-        self.setHorizontalHeaderLabels(self.horizontalHeader)
-        self.setRowCount(0)
+            self.respone_callback(json.dumps(response))
+            self.update_widget('show')

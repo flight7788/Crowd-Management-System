@@ -8,29 +8,17 @@ class StuShow(QtWidgets.QWidget):
     def __init__(self):
         super().__init__()
         layout = QtWidgets.QVBoxLayout()
-        header_layout = QtWidgets.QHBoxLayout()
-        show_label = LabelComponent(16,"show all student")
         self.info_table = table()
-        refresh_label = ButtonComponent("refresh")
-        refresh_label.setIcon(QtGui.QIcon('./icon/refresh.png'))
-        refresh_label.setIconSize(QtCore.QSize(40,40))
-        refresh_label.clicked.connect(lambda: self.query())
         scroll = QtWidgets.QScrollArea()
         scroll.setWidget(self.info_table)
         scroll.setWidgetResizable(True)
-        self.info_table.setStyleSheet("background-color: rgb(144, 144, 144)")
-        
-        header_layout.addWidget(show_label)
-        header_layout.addWidget(refresh_label)
-        header_layout.addStretch()
-        layout.addLayout(header_layout,1)
-        layout.addWidget(self.info_table,9)
+        layout.addWidget(scroll)
         self.setLayout(layout)
     
     def load(self):
         pass
     
-    def query(self):
+    def refresh(self):
         self.execute_query = ExecuteCommand(command='query_all_stu',data={})
         self.execute_query.start()
         self.execute_query.return_sig.connect(self.show_followUp)
@@ -51,9 +39,9 @@ class table(QtWidgets.QTableWidget):
         self.horizontalHeader = ['student_id',"student_name","card_no"]
         self.refresh()
         self.setEditTriggers(self.NoEditTriggers)
-        self.setColumnWidth(4,200)
-        self.setRowHeight(0,40)
-        
+        self.setStyleSheet("""QTableWidget::item{color:white};
+                                        font: bold 10px;
+                                        background-color: rgb(144, 144, 144)""")
     def refresh(self):
         self.clear()
         self.setColumnCount(len(self.horizontalHeader))
