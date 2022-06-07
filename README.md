@@ -1,6 +1,6 @@
 # Crowd-Management-System
 
-![Project Image](https://github.com/Crowd-Management-System/blob/master/Demo.gif)
+![Project Image](https://github.com/flight7788/Crowd-Management-System/blob/main/Demo.gif)
 ---
 
 ### Contents
