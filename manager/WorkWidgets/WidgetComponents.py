@@ -30,12 +30,12 @@ class ButtonComponent(QtWidgets.QPushButton):
         self.setFont(QtGui.QFont("微軟正黑體", font_size))
         self.setStyleSheet("""
             QPushButton{
-                border: 3px solid rgb(255, 255, 255);
+                border: 2px solid rgb(255, 255, 255);
                 border-radius: 10px;
                 color: white;
             }
             QPushButton::hover {
-                background-color: white;
+                background-color: rgb(200, 200, 200);
                 color: black;
             }
         """)

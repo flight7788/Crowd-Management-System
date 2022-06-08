@@ -10,17 +10,24 @@ class CardQuery(QtWidgets.QWidget):
         super().__init__()
         self.update_widget = update_widget
         self.respone_callback = respone_callback
-        layout = QtWidgets.QHBoxLayout()
+        layout = QtWidgets.QVBoxLayout()
+        query_layout = QtWidgets.QHBoxLayout()
         
-        stuid_label = LabelComponent(16,"學號:")
+        self.show_label = LabelComponent(16,"")
+        stuid_label = LabelComponent(20,"學號:")
         self.stuid_input = LineEditComponent("")
-        query_button = ButtonComponent("查詢")
+        query_button = ButtonComponent("")
+        query_button.setIcon(QtGui.QIcon('./icon/search.png'))
+        query_button.setIconSize(QtCore.QSize(30,30))
         query_button.clicked.connect(self.query_action)
         
-        layout.addWidget(stuid_label)
-        layout.addWidget(self.stuid_input)
-        layout.addWidget(query_button)
-        layout.addStretch()
+        query_layout.addWidget(stuid_label,alignment=QtCore.Qt.AlignVCenter)
+        query_layout.addWidget(self.stuid_input)
+        query_layout.addWidget(query_button)
+        query_layout.addStretch()
+        
+        layout.addLayout(query_layout)
+        layout.addWidget(self.show_label)
         self.setLayout(layout)
     
     def load(self):
@@ -36,6 +43,10 @@ class CardQuery(QtWidgets.QWidget):
     
     def query_followUp(self,response):
         response = json.loads(response)
+        warning = ""
         if response['status'] == 'OK':
             self.respone_callback(json.dumps(response))
             self.update_widget('show')
+        else:
+            warning = "student {} have no info".format(self.stuid_input.text())
+            self.show_label.setText(warning)

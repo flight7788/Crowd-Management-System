@@ -16,6 +16,10 @@ class HomeWidget(QtWidgets.QWidget):
         tapcard_botton = ButtonComponent("刷卡報表")
         person_botton.clicked.connect(lambda: self.update_widget_callback("ManageStu"))
         tapcard_botton.clicked.connect(lambda: self.update_widget_callback("RecodeTap"))
+        person_botton.setIcon(QtGui.QIcon('./icon/personnel_management.png'))
+        person_botton.setIconSize(QtCore.QSize(50,50))
+        tapcard_botton.setIcon(QtGui.QIcon('./icon/material.png'))
+        tapcard_botton.setIconSize(QtCore.QSize(50,50))
         
         header_label.setAlignment(QtCore.Qt.AlignHCenter)
         header_label.setStyleSheet("""
@@ -27,15 +31,14 @@ class HomeWidget(QtWidgets.QWidget):
         person_botton.setStyleSheet(
             """
             QPushButton#person_botton {
-                background-color: none;
                 color: #FFFFFF;
                 border: 5px solid rgb(255, 255, 255);
                 border-radius: 10px;
-                padding: 100px;
+                padding: 50px;
                 font: bold 40px;
             }
             QPushButton#person_botton:hover {
-                background-color: rgb(255,255,255);
+                background-color: rgb(200, 200, 200);
                 color: black;
             }
             """
@@ -44,15 +47,14 @@ class HomeWidget(QtWidgets.QWidget):
         tapcard_botton.setStyleSheet(
             """
             QPushButton#tapcard_botton {
-                background-color: none;
                 color: #FFFFFF;
                 border: 5px solid rgb(255, 255, 255);
                 border-radius: 10px;
-                padding: 100px;
+                padding: 50px;
                 font: bold 40px;
             }
             QPushButton#tapcard_botton:hover {
-                background-color: rgb(255, 255, 255);
+                background-color: rgb(200, 200, 200);
                 color: black;
             }
             """
@@ -60,7 +62,9 @@ class HomeWidget(QtWidgets.QWidget):
         function_layout.addWidget(person_botton,alignment=QtCore.Qt.AlignCenter)
         function_layout.addWidget(tapcard_botton,alignment=QtCore.Qt.AlignCenter)
         layout.addWidget(header_label, stretch=1)
+        layout.addStretch()
         layout.addLayout(function_layout,stretch=9)
+        layout.addStretch()
         self.setLayout(layout)
     
     def load(self):

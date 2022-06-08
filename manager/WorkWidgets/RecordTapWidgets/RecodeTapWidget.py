@@ -33,7 +33,7 @@ class HeaderWidget(QtWidgets.QWidget):
         super().__init__()
         self.backhome = backhome
         layout = QtWidgets.QHBoxLayout()
-        header_label = LabelComponent(16,"刷卡報表")
+        header_label = LabelComponent(16,"SwipeReport")
         backhome_botton = ButtonComponent("Home")
         backhome_botton.clicked.connect(lambda: self.backhome("home"))
         
@@ -52,13 +52,17 @@ class MenuWidget(QtWidgets.QWidget):
         super().__init__()
         self.taprecord_widget = update_widget
         layout = QtWidgets.QGridLayout()
-        query_botton = ButtonComponent("人員查詢")
-        showAll_botton = ButtonComponent("紀錄查詢")
-        query_botton.clicked.connect(lambda: self.taprecord_widget("query"))
-        showAll_botton.clicked.connect(lambda: self.taprecord_widget("show"))
+        query_button = ButtonComponent(" search")
+        show_button = ButtonComponent(" report")
+        query_button.clicked.connect(lambda: self.taprecord_widget("query"))
+        show_button.clicked.connect(lambda: self.taprecord_widget("show"))
+        query_button.setIcon(QtGui.QIcon('./icon/personal_search.png'))
+        query_button.setIconSize(QtCore.QSize(30,30))
+        show_button.setIcon(QtGui.QIcon('./icon/report.png'))
+        show_button.setIconSize(QtCore.QSize(30,30))
         
-        layout.addWidget(showAll_botton, 0,0,1,1)
-        layout.addWidget(query_botton, 1,0,1,1)
+        layout.addWidget(show_button, 0,0,1,1)
+        layout.addWidget(query_button, 1,0,1,1)
         layout.setRowStretch(0,2)
         layout.setRowStretch(1,2)
         layout.setRowStretch(2,6)
