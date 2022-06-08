@@ -8,13 +8,13 @@ class StuAdd(QtWidgets.QWidget):
     def __init__(self):
         super().__init__()
         self.show_label = LabelComponent(16,"")
-        name_label = LabelComponent(16,"姓名")
+        name_label = LabelComponent(16,"Name")
         self.name_input = LineEditComponent("")
-        stuid_label = LabelComponent(16,"學號")
+        stuid_label = LabelComponent(16,"SchoolID")
         self.stuid_input = LineEditComponent("")
-        cardid_label = LabelComponent(16,"卡號")
+        cardid_label = LabelComponent(16,"CardID")
         self.cardid_input = LineEditComponent("")
-        self.add_botton = ButtonComponent("新增")
+        self.add_botton = ButtonComponent("comfire")
         self.add_botton.clicked.connect(lambda: self.add())
         
         
@@ -43,7 +43,8 @@ class StuAdd(QtWidgets.QWidget):
         self.name_input.setText("")
         self.stuid_input.setText("")
         self.cardid_input.setText("")
-    
+        self.show_label.setText("")
+        
     def add(self):
         student_id= self.stuid_input.text()
         card_no = self.cardid_input.text()

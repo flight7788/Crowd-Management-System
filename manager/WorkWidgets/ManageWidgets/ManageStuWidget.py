@@ -31,9 +31,9 @@ class MenuWidget(QtWidgets.QWidget):
         layout = QtWidgets.QHBoxLayout()
         label = LabelComponent(14,"|")
         label2 = LabelComponent(14,"|")
-        self.show_botton = ButtonComponent("人員名單")
-        self.addstu_botton = ButtonComponent("新增人員")
-        self.modifystu_botton = ButtonComponent("人員修改")
+        self.show_botton = ButtonComponent("MemberList")
+        self.addstu_botton = ButtonComponent("Add")
+        self.modifystu_botton = ButtonComponent("Setting")
         self.refresh_botton = ButtonComponent("")
         backhome_botton = ButtonComponent("Home")
         self.button_style = buttonstyle()
@@ -47,6 +47,12 @@ class MenuWidget(QtWidgets.QWidget):
         self.addstu_botton.setObjectName('addstu_botton')
         self.modifystu_botton.setObjectName('modifystu_botton')
         
+        self.show_botton.setIcon(QtGui.QIcon('./icon/StuList.png'))
+        self.show_botton.setIconSize(QtCore.QSize(25,25))
+        self.addstu_botton.setIcon(QtGui.QIcon('./icon/StuAdd.png'))
+        self.addstu_botton.setIconSize(QtCore.QSize(25,25))
+        self.modifystu_botton.setIcon(QtGui.QIcon('./icon/StuSetting.png'))
+        self.modifystu_botton.setIconSize(QtCore.QSize(25,25))
         backhome_botton.setIcon(QtGui.QIcon('./icon/home.png'))
         backhome_botton.setIconSize(QtCore.QSize(25,25))
         self.refresh_botton.setIcon(QtGui.QIcon('./icon/refresh.png'))
@@ -118,7 +124,7 @@ class buttonstyle():
     
     def SetStyle(self,button,style="normalstyle"):
         if style == "markstyle":
-            background_color = "white"
+            background_color = "rgb(200, 200, 200)"
             color = "black"
         else:
             background_color = "rgb(33, 43, 51)"
@@ -127,13 +133,12 @@ class buttonstyle():
         set_style = """
             QPushButton#{}{{
                 background-color: {};
-                border: none;
+                border-radius: 5px;
                 color: {};
             }}
             QPushButton#{}:hover {{
-                background-color: white;
+                background-color: rgb(200, 200, 200);
                 color: black;
-                border: 3px solid rgb(255, 255, 255);
                 border-radius: 10px;
             }}
         """.format(button,background_color,color,button)
