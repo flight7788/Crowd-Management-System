@@ -11,5 +11,8 @@ class MessageProcessor:
     
     def return_fail_with_reason(self,reason):
         return {'status' : 'Fail' , 'reason' : reason}
+    
+    def return_fail_with_not_found(self):
+        return {'status' : 'Fail' , 'reason' : 'Not Found'}
         
       

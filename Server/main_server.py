@@ -39,9 +39,7 @@ def receive_handler(messages):
     
     params = messages['parameters'] if 'parameters' in messages else {}
     params = messages['parameter'] if 'parameter' in messages else params
-    
-   
-        
+
     if cmd not in FUNCTION_METHOD:
         return MessageProcessor().return_fail_with_reason('command:{} is not exists'.format(cmd))
     try:

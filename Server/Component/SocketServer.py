@@ -35,14 +35,25 @@ class SocketServer(Thread):
         while keep_going:
             try:
                 message = connection.recv(20000000).strip().decode()
-            except:
+            except Exception as e:
                 keep_going = False
+                rtn_msg = dict()
+                rtn_msg['status'] = 'Fail'
+                rtn_msg['reason'] = 'Fatal Error: Transmission Error : {}'.format(e)
+                       
+                connection.send("Error".encode())
             else:
                 if not message:
                     break
                 
                 #print(message)
-                message = json.loads(message)
+                try:
+                  message = json.loads(message)
+                except Exception as e:
+                     rtn_msg['status'] = 'Fail'
+                     rtn_msg['reason'] = 'Fatal Error: JSON not a valid format : {}'.format(e)
+                     connection.send("Error".encode())
+                     
                 
                 if message['command'] == "close":
                     connection.send("closing".encode())
