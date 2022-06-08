@@ -14,7 +14,7 @@ class CardQuery(QtWidgets.QWidget):
         query_layout = QtWidgets.QHBoxLayout()
         
         self.show_label = LabelComponent(16,"")
-        stuid_label = LabelComponent(20,"學號:")
+        stuid_label = LabelComponent(16,"School_ID:")
         self.stuid_input = LineEditComponent("")
         query_button = ButtonComponent("")
         query_button.setIcon(QtGui.QIcon('./icon/search.png'))

@@ -10,7 +10,7 @@ class StuQuery(QtWidgets.QWidget):
         layout = QtWidgets.QVBoxLayout()
         content_layout =QtWidgets.QHBoxLayout()
         self.show_label = LabelComponent(20,"")
-        stuid_label = LabelComponent(16,"SchoolID:")
+        stuid_label = LabelComponent(16,"School_ID:")
         self.stuid_input = LineEditComponent("")
         search_button = ButtonComponent("")
         search_button.clicked.connect(lambda: self.query_action())

@@ -12,7 +12,6 @@ class Setting(QtWidgets.QStackedWidget):
             "query": self.addWidget(StuQuery(self.update_widget,self.modify.getinfo)),
             "modify": self.addWidget(self.modify)
         }
-        self.update_widget("query")
     
     def update_widget(self, name):
         self.setCurrentIndex(self.widget_dict[name])
@@ -20,4 +19,4 @@ class Setting(QtWidgets.QStackedWidget):
         current_widget.load()
     
     def load(self):
-        pass
+        self.update_widget("query")
