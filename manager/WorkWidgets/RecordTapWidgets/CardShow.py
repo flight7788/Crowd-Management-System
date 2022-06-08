@@ -9,6 +9,7 @@ class CardShow(QtWidgets.QWidget):
         super().__init__()
         self.setObjectName("show_stu_widget")
         self.calendar = CalendarView(self.custom_followUP)
+        self.image_widget = ImageWidget()
         layout = QtWidgets.QVBoxLayout()
         functiom_layout = QtWidgets.QHBoxLayout()
         one_day_button = ButtonComponent("past day")
@@ -99,24 +100,23 @@ class CardShow(QtWidgets.QWidget):
     def query_img_followUp(self,response):
         response_ = json.loads(response)
         print(type(response_))
-        image_widget = ImageWidget(response_["data"])
-        image_widget.show()
+        self.image_widget.show_image(response_["data"])
         
-class ImageWidget(QtWidgets.QMainWindow):
-    def __init__(self,image):
+class ImageWidget(QtWidgets.QWidget):
+    def __init__(self):
         super().__init__()
+        self.setWindowTitle("Picture")
+        layout = QtWidgets.QVBoxLayout()
+        self.image_label = LabelComponent(12,"")
+        layout.addWidget(self.image_label)
+        self.setLayout(layout)
+        
+    def show_image(self,image):
         decode = ImageProcessor(image)
         self.picture = decode.decodeImg()
-        
-        self.setWindowTitle("Picture")
-        self.central_widget = QtWidgets.QWidget()
-        self.setCentralWidget(self.central_widget)
-        layout = QtWidgets.QVBoxLayout(self.central_widget)
-        image_label = QtWidgets.QLabel(self)
         pixmap = QtGui.QPixmap(self.picture)
-        image_label.setPixmap(pixmap)
-        self.resize(pixmap.width(), pixmap.height())
-        layout.addWidget(image_label)
+        self.image_label.setPixmap(pixmap)
+        self.show()
         
     def closeEvent(self, event):
         event.accept()
@@ -136,6 +136,7 @@ class showtable(QtWidgets.QTableWidget):
         self.clear()
         self.setColumnCount(len(self.horizontalHeader))
         self.setHorizontalHeaderLabels(self.horizontalHeader)
+        self.setColumnWidth(0, 50)
         self.setRowCount(0)
         
 class CalendarView(QtWidgets.QWidget):
