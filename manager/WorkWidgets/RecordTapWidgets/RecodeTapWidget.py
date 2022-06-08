@@ -1,6 +1,7 @@
 from PyQt5 import QtWidgets, QtGui, QtCore
 from WorkWidgets.RecordTapWidgets.CardShow import CardShow
 from WorkWidgets.RecordTapWidgets.CardQuery import CardQuery
+from WorkWidgets.RecordTapWidgets.CardAnalyz import CardAnalyz
 from WorkWidgets.WidgetComponents import LabelComponent
 from WorkWidgets.WidgetComponents import ButtonComponent
 
@@ -54,18 +55,24 @@ class MenuWidget(QtWidgets.QWidget):
         layout = QtWidgets.QGridLayout()
         query_button = ButtonComponent(" search")
         show_button = ButtonComponent(" report")
+        analyz_button = ButtonComponent(" analyz")
         query_button.clicked.connect(lambda: self.taprecord_widget("query"))
         show_button.clicked.connect(lambda: self.taprecord_widget("show"))
+        analyz_button.clicked.connect(lambda: self.taprecord_widget("analyz"))
         query_button.setIcon(QtGui.QIcon('./icon/personal_search.png'))
         query_button.setIconSize(QtCore.QSize(30,30))
         show_button.setIcon(QtGui.QIcon('./icon/report.png'))
         show_button.setIconSize(QtCore.QSize(30,30))
+        analyz_button.setIcon(QtGui.QIcon('./icon/report.png'))
+        analyz_button.setIconSize(QtCore.QSize(30,30))
         
         layout.addWidget(show_button, 0,0,1,1)
         layout.addWidget(query_button, 1,0,1,1)
+        layout.addWidget(analyz_button, 2,0,1,1)
         layout.setRowStretch(0,2)
         layout.setRowStretch(1,2)
-        layout.setRowStretch(2,6)
+        layout.setRowStretch(2,2)
+        layout.setRowStretch(2,4)
         
         self.setLayout(layout)
         
@@ -76,6 +83,7 @@ class FunctionWidget(QtWidgets.QStackedWidget):
         self.widget_dict = {
             "show": self.addWidget(self.cardshow),
             "query": self.addWidget(CardQuery(self.update_widget,self.cardshow.call_back_action)),
+            "analyz": self.addWidget(CardAnalyz()),
         }
         self.update_widget("query")
     
