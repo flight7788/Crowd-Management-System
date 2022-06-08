@@ -55,20 +55,20 @@ class MenuWidget(QtWidgets.QWidget):
         layout = QtWidgets.QGridLayout()
         query_button = ButtonComponent(" search")
         show_button = ButtonComponent(" report")
-        analyz_button = ButtonComponent(" analyz")
+        analysis_button = ButtonComponent(" analysis")
         query_button.clicked.connect(lambda: self.taprecord_widget("query"))
         show_button.clicked.connect(lambda: self.taprecord_widget("show"))
-        analyz_button.clicked.connect(lambda: self.taprecord_widget("analyz"))
+        analysis_button.clicked.connect(lambda: self.taprecord_widget("analysis"))
         query_button.setIcon(QtGui.QIcon('./icon/personal_search.png'))
-        query_button.setIconSize(QtCore.QSize(30,30))
+        query_button.setIconSize(QtCore.QSize(30,40))
         show_button.setIcon(QtGui.QIcon('./icon/report.png'))
-        show_button.setIconSize(QtCore.QSize(30,30))
-        analyz_button.setIcon(QtGui.QIcon('./icon/report.png'))
-        analyz_button.setIconSize(QtCore.QSize(30,30))
+        show_button.setIconSize(QtCore.QSize(30,40))
+        analysis_button.setIcon(QtGui.QIcon('./icon/analysis.png'))
+        analysis_button.setIconSize(QtCore.QSize(30,40))
         
         layout.addWidget(show_button, 0,0,1,1)
         layout.addWidget(query_button, 1,0,1,1)
-        layout.addWidget(analyz_button, 2,0,1,1)
+        layout.addWidget(analysis_button, 2,0,1,1)
         layout.setRowStretch(0,2)
         layout.setRowStretch(1,2)
         layout.setRowStretch(2,2)
@@ -83,7 +83,7 @@ class FunctionWidget(QtWidgets.QStackedWidget):
         self.widget_dict = {
             "show": self.addWidget(self.cardshow),
             "query": self.addWidget(CardQuery(self.update_widget,self.cardshow.call_back_action)),
-            "analyz": self.addWidget(CardAnalyz()),
+            "analysis": self.addWidget(CardAnalyz()),
         }
         self.update_widget("query")
     
