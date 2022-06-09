@@ -1,7 +1,7 @@
 from Repository.StudentLog import StudentLog
 from datetime import datetime
 from Component.MessageProcessor import MessageProcessor
-
+from Component.Logger import Logger
 class QueryLogs(MessageProcessor):
         
     def execute(self,params=[]):
@@ -30,6 +30,7 @@ class QueryLogs(MessageProcessor):
                     
                 except Exception as e:
                     print('Ignore : Parse SwipeDateTime Error, {} , date id is {}'.format(e,key))
+                    Logger().debug('Ignore : Parse SwipeDateTime Error, {} , date id is {}'.format(e,key))
                     pass
             
             if result['is_success'] and len(filter_data)>0 :

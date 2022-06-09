@@ -2,8 +2,12 @@ from threading import Thread
 import socket
 import json
 import copy
+from Component.Logger import Logger
 
 class SocketServer(Thread):
+    
+    
+    
     def __init__(self, host, port , handler):
         super().__init__()
         self.server_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
@@ -19,7 +23,9 @@ class SocketServer(Thread):
     def run(self):
         while True:
             connection, address = self.server_socket.accept()
-            print("{} connected".format(address))
+            Logger().info("Server Message # : {} Connected".format(address))
+            print("Server Message # : {} Connected".format(address))
+            
             self.new_connection(connection=connection,
                                 address=address)
 
@@ -40,6 +46,7 @@ class SocketServer(Thread):
                 rtn_msg = dict()
                 rtn_msg['status'] = 'Fail'
                 rtn_msg['reason'] = 'Fatal Error: Transmission Error : {}'.format(e)
+                Logger().error('Fatal Error: Transmission Error : {}'.format(e))
                        
                 connection.send("Error".encode())
             else:
@@ -52,6 +59,7 @@ class SocketServer(Thread):
                 except Exception as e:
                      rtn_msg['status'] = 'Fail'
                      rtn_msg['reason'] = 'Fatal Error: JSON not a valid format : {}'.format(e)
+                     Logger().error('Fatal Error: JSON not a valid format : {}'.format(e))
                      connection.send("Error".encode())
                      
                 
@@ -67,13 +75,15 @@ class SocketServer(Thread):
                        show_dict['parameters']['img_binary'] = 'list (uint8)'
                        
                     print('Server Receive # : {} from {}'.format(show_dict,address))
+                    Logger().info('Server Receive # : {} from {}'.format(show_dict,address))
                     
                     reply_msg = self.handler(message)
                     connection.send(json.dumps(reply_msg).encode())
                     
         
         connection.close()
-        print("close connection")
+        print("Server Message # : {} Disconnected".format(address))
+        Logger().info("Server Message # : {} Disconnected".format(address))
         
 
         

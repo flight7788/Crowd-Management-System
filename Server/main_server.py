@@ -1,6 +1,7 @@
 from Component.FireStore.FireStoreConnector import FireStoreInitializer
 from Component.SocketServer import SocketServer
 from Component.MessageProcessor import MessageProcessor
+from Component.Logger import Logger
 from Service.QueryImgBinaryService import QueryImgBinary
 from Service.QueryStuService import QueryStu
 from Service.QueryCardService import QueryCard
@@ -13,6 +14,7 @@ from Service.ModifyStuService import ModifyStu
 from Service.QueryAllStuService import QueryAllStu
 from Service.QueryLogsService import QueryLogs
 from Service.QueryImgBinaryService import QueryImgBinary
+
 
 FIRESTORE_KEYCHAIN = "connection_info.json"
 HOST = "140.124.39.131"
@@ -44,11 +46,13 @@ def receive_handler(messages):
         return MessageProcessor().return_fail_with_reason('command:{} is not exists'.format(cmd))
     try:
         message = FUNCTION_METHOD[cmd]().execute(params)
+        Logger().info('Server Response # : {}'.format(message))
         print('Server Response # : {}'.format(message))
         return message
 
     except  Exception as e:
         print('Exception occured : {}'.format(e))
+        Logger().error('Exception occured : {}'.format(e))
         return MessageProcessor().return_fail_with_reason('Exception occured : {}'.format(e))
 
 def main():
@@ -58,11 +62,14 @@ def main():
     server.setDaemon=True
     server.serve()
     
+
     print('=============================================')
     print('Start Crownd Managemenmt System Server....')
     print('IP: {} , PORT: {}'.format(HOST,PORT))
     print('=============================================')
     print('Waiting for connection...')
+    
+    Logger().info('Server started at IP: {} , PORT: {}'.format(HOST,PORT))
     
     # because we set daemon is true, so the main thread has to keep alive
     while True:
@@ -72,5 +79,6 @@ def main():
     
     server.server_socket.close()
     print("leaving ....... ")   
+    Logger().info('Server closed'.format(HOST,PORT))
 
 main()

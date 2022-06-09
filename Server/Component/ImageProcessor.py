@@ -13,7 +13,7 @@ class ImageProcessor:
     
     
     def decodeImg(self , img_binary):
-        time_stamp = datetime.utcnow().strftime('%Y%m%d%H%M%S%f')
+        time_stamp = datetime.now().strftime('%Y%m%d%H%M%S%f')
         filename = './Swipe_Images/{}.png'.format(time_stamp)
         img = np.asarray(img_binary, dtype = 'uint8')
         img_decode  = cv2.imdecode(img, cv2.IMREAD_COLOR)
