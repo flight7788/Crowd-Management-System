@@ -33,7 +33,7 @@ class CardShow(QtWidgets.QWidget):
         self.setLayout(layout)
     
     def load(self):
-        self.past_day_action()
+        pass
     
     def show_logs(self,start_time,end_time):
         date = {'start_time': start_time, 'end_time': end_time}
@@ -208,7 +208,6 @@ class CalendarView(QtWidgets.QWidget):
         self.get_start_lineEdit.setText("")
         self.get_end_lineEdit.setText(currentDate)
         self.end_time_edit.setTime(QtCore.QTime.currentTime())
-        
         self.show()
     
     def GetDate(self, date):
@@ -249,4 +248,4 @@ class CalendarView(QtWidgets.QWidget):
         
     def SentDate(self,StartTime,EndTime):
         self.call_back_time(StartTime,EndTime)
-        self.hide()
+        self.close()
