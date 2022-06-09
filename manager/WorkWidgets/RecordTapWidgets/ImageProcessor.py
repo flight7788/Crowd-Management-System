@@ -13,7 +13,7 @@ class ImageProcessor(QtCore.QThread):
         
     def decodeImg(self):
         time_stamp = datetime.utcnow().strftime('%Y%m%d%H%M%S')
-        filename = './SwipeImage/{}.png'.format(time_stamp)
+        filename = './{}.png'.format(time_stamp)
         img = np.asarray(self.img_binary, dtype = 'uint8')
         img_decode  = cv2.imdecode(img, cv2.IMREAD_COLOR)
         cv2.imwrite(filename , img_decode)
