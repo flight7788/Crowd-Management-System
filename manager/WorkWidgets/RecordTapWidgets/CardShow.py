@@ -33,7 +33,7 @@ class CardShow(QtWidgets.QWidget):
         self.setLayout(layout)
     
     def load(self):
-        self.past_day_action()
+        pass
     
     def show_logs(self,start_time,end_time):
         date = {'start_time': start_time, 'end_time': end_time}
@@ -100,7 +100,8 @@ class CardShow(QtWidgets.QWidget):
     def query_img_followUp(self,response):
         response_ = json.loads(response)
         print(type(response_))
-        self.image_widget.show_image(response_["data"])
+        self.image_widget.decode_image(response_["data"])
+        
         
 class ImageWidget(QtWidgets.QWidget):
     def __init__(self):
@@ -110,11 +111,15 @@ class ImageWidget(QtWidgets.QWidget):
         self.image_label = LabelComponent(12,"")
         layout.addWidget(self.image_label)
         self.setLayout(layout)
-        
-    def show_image(self,image):
-        decode = ImageProcessor(image)
-        self.picture = decode.decodeImg()
-        pixmap = QtGui.QPixmap(self.picture)
+    
+    def decode_image(self,image):
+        self.decode = ImageProcessor(image)
+        self.decode.start()
+        self.decode.return_sig.connect(self.show_image)
+    
+    def show_image(self,picture):
+        self.picture = picture
+        pixmap = QtGui.QPixmap(picture)
         self.image_label.setPixmap(pixmap)
         self.show()
         
@@ -203,7 +208,6 @@ class CalendarView(QtWidgets.QWidget):
         self.get_start_lineEdit.setText("")
         self.get_end_lineEdit.setText(currentDate)
         self.end_time_edit.setTime(QtCore.QTime.currentTime())
-        
         self.show()
     
     def GetDate(self, date):
@@ -244,4 +248,4 @@ class CalendarView(QtWidgets.QWidget):
         
     def SentDate(self,StartTime,EndTime):
         self.call_back_time(StartTime,EndTime)
-        self.hide()
+        self.close()

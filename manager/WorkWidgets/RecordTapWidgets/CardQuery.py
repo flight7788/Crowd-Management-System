@@ -32,6 +32,7 @@ class CardQuery(QtWidgets.QWidget):
     
     def load(self):
         self.stuid_input.setText("")
+        self.show_label.setText("")
     
     def query_action(self):
         stuid = self.stuid_input.text()
