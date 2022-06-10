@@ -10,12 +10,14 @@ class StuModify(QtWidgets.QWidget):
         self.back_query = update_widget
         self.delete_widget = DeleteConfirmWidget(self.delet_confirm)
         self.show_label = LabelComponent(16,"")
-        name_label = LabelComponent(16,"Name")
-        self.name_input = LineEditComponent("")
         StuId_label = LabelComponent(16,"School_ID")
         self.StuId_input = LineEditComponent("")
+        name_label = LabelComponent(16,"Name")
+        self.name_input = LineEditComponent("")
+        self.name_input.setObjectName("NameLineEdit")
         cardId_label = LabelComponent(16,"Card_ID")
         self.cardId_input = LineEditComponent("")
+        self.cardId_input.setObjectName("CardIdLineEdit")
         self.modify_botton = ButtonComponent("modify")
         self.delete_botton = ButtonComponent("delete")
         self.cancel_botton = ButtonComponent("cancle")
@@ -31,10 +33,10 @@ class StuModify(QtWidgets.QWidget):
         
         layout = QtWidgets.QVBoxLayout()
         info_layout = QtWidgets.QGridLayout()
-        info_layout.addWidget(name_label, 0,0,1,1,alignment=QtCore.Qt.AlignVCenter)
-        info_layout.addWidget(self.name_input, 0,1,1,1)
-        info_layout.addWidget(StuId_label, 1,0,1,1,alignment=QtCore.Qt.AlignVCenter)
-        info_layout.addWidget(self.StuId_input, 1,1,1,1)
+        info_layout.addWidget(StuId_label, 0,0,1,1,alignment=QtCore.Qt.AlignVCenter)
+        info_layout.addWidget(self.StuId_input, 0,1,1,1)
+        info_layout.addWidget(name_label, 1,0,1,1,alignment=QtCore.Qt.AlignVCenter)
+        info_layout.addWidget(self.name_input, 1,1,1,1)
         info_layout.addWidget(cardId_label, 2,0,1,1,alignment=QtCore.Qt.AlignVCenter)
         info_layout.addWidget(self.cardId_input, 2,1,1,1)
         info_layout.setColumnStretch(0,1)
@@ -56,7 +58,6 @@ class StuModify(QtWidgets.QWidget):
         function_layout.setColumnStretch(2,2)
         function_layout.setColumnStretch(3,2)
         function_layout.setColumnStretch(4,2)
-        self.cancel()
         
         combine_info_show_layout = QtWidgets.QHBoxLayout()
         combine_info_show_layout.addLayout(info_layout)
@@ -64,12 +65,10 @@ class StuModify(QtWidgets.QWidget):
         
         layout.addLayout(combine_info_show_layout)
         layout.addLayout(function_layout)
+        layout.addStretch()
         self.setLayout(layout)
     
     def load(self):
-        self.cancel()
-    
-    def cancel(self):
         self.name_input.setReadOnly(True)
         self.StuId_input.setReadOnly(True)
         self.cardId_input.setReadOnly(True)
@@ -84,11 +83,9 @@ class StuModify(QtWidgets.QWidget):
     
     def modify_action(self):
         self.name_input.setReadOnly(False)
-        self.StuId_input.setReadOnly(False)
         self.cardId_input.setReadOnly(False)
-        self.name_input.setStyleSheet("background:rgb(144,144,144); color:black;")
-        self.StuId_input.setStyleSheet("background:rgb(144,144,144); color:black;")
-        self.cardId_input.setStyleSheet("background:rgb(144,144,144); color:black;")
+        self.name_input.setStyleSheet("QLineEdit#NameLineEdit{background:rgb(120,120,120); color:black;} QLineEdit:focus#NameLineEdit{background:rgb(220,220,220)};")
+        self.cardId_input.setStyleSheet("QLineEdit#CardIdLineEdit{background:rgb(120,120,120); color:black;} QLineEdit:focus#CardIdLineEdit{background:rgb(220,220,220)};")
         self.backquery_botton.hide()
         self.modify_botton.hide()
         self.delete_botton.hide()
@@ -123,14 +120,22 @@ class StuModify(QtWidgets.QWidget):
     def confirm_followup(self,response):
         response = json.loads(response)
         if response['status'] == 'OK':
-            self.cancel()
+            self.load()
         else:
             print("fail")
     
+    def cancel(self):
+        self.reloadInfo()
+        self.load()
+    
+    def reloadInfo(self):
+        self.StuId_input.setText(self.stu_info['student_id'])
+        self.name_input.setText(self.stu_info["student_name"])
+        self.cardId_input.setText(self.stu_info["card_no"])
+        
     def getinfo(self,student):
-        self.StuId_input.setText(student['student_id'])
-        self.name_input.setText(student["student_name"])
-        self.cardId_input.setText(student["card_no"])
+        self.stu_info = student
+        self.reloadInfo()
 
 class DeleteConfirmWidget(QtWidgets.QWidget):
     def __init__(self,callback_delete_confirm):
