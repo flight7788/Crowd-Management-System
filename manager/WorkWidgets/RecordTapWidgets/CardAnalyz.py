@@ -1,3 +1,4 @@
+from urllib.response import addinfo
 from PyQt5 import QtWidgets,QtCore
 import pyqtgraph as pg
 from pyqtgraph.Qt import QtGui
@@ -33,7 +34,7 @@ class CardAnalyz(QtWidgets.QWidget):
     def get_info_follwUp(self,response):
         days = 7
         date_index = list()
-        population_y = [0]*days
+        non_repeat_y = [0]*days
         repeat_y = [0]*days
         today = QtCore.QDate.currentDate()
         for i in range(days):
@@ -50,16 +51,17 @@ class CardAnalyz(QtWidgets.QWidget):
                     repeat_y[index]+=1
                     if not student['card_no'] in stu_list:
                         stu_list.append(student['card_no'])
-                        population_y[index]+=1
-        self.draw_plot(date_index,population_y,repeat_y)
+                        non_repeat_y[index]+=1
+        self.draw_plot(date_index,non_repeat_y,repeat_y)
                 
-    def draw_plot(self,date_index,population_y,repeat_y):
+    def draw_plot(self,date_index,non_repeat_y,repeat_y):
         index_x = list(range(1,len(date_index)+1))
-        no_barItem = pg.BarGraphItem(x = index_x, height = population_y, width = 0.2, brush=(107,200,224))
-        repeat_barItem = pg.BarGraphItem(x = index_x, y0=population_y,height = repeat_y, width = 0.2, brush=(224,200,107))
-        self.plt.addItem(no_barItem)
+        non_repeat_barItem = pg.BarGraphItem(x = index_x, height = non_repeat_y, width = 0.2, brush=(107,200,224))
+        repeat_barItem = pg.BarGraphItem(x = index_x, y0=non_repeat_y,height = repeat_y, width = 0.2, brush=(224,200,107))
+        self.plt.addItem(non_repeat_barItem)
         self.plt.addItem(repeat_barItem)
         self.plt.getAxis('bottom').setTicks([[(i, date_index[i-1]) for i in index_x]])
+        
         font = QtGui.QFont()
         font.setPixelSize(20)
         self.plt.getAxis("bottom").setStyle(tickFont = font)

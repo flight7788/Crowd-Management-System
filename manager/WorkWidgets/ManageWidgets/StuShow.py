@@ -30,20 +30,21 @@ class StuShow(QtWidgets.QWidget):
             data = response['data']
             for index,student in enumerate(data):
                 self.info_table.insertRow(index)
-                for index_col,colnum in enumerate(self.info_table.horizontalHeader):
+                for index_col,colnum in enumerate(self.info_table.horizontal_list):
                     self.info_table.setItem(index,index_col,QtWidgets.QTableWidgetItem(student[colnum]))
         
 class table(QtWidgets.QTableWidget):
     def __init__(self):
         super().__init__()
-        self.horizontalHeader = ['student_id',"student_name","card_no"]
+        self.horizontal_list = ['student_id',"student_name","card_no"]
         self.refresh()
+        self.horizontalHeader().setSectionResizeMode(QtWidgets.QHeaderView.Stretch)
         self.setEditTriggers(self.NoEditTriggers)
         self.setStyleSheet("""QTableWidget::item{color:white};
                                         font: bold 10px;
                                         background-color: rgb(144, 144, 144)""")
     def refresh(self):
         self.clear()
-        self.setColumnCount(len(self.horizontalHeader))
-        self.setHorizontalHeaderLabels(self.horizontalHeader)
+        self.setColumnCount(len(self.horizontal_list))
+        self.setHorizontalHeaderLabels(self.horizontal_list)
         self.setRowCount(0)

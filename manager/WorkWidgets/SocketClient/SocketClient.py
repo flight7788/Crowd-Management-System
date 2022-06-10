@@ -18,5 +18,5 @@ class SocketClient:
     def wait_response(self):
         received_data = self.client_socket.recv(BUFFER_SIZE).decode()
         received_data = json.loads(received_data)
-        print("The client received data => {}".format(received_data))
+        #print("The client received data => {}".format(received_data))
         return received_data

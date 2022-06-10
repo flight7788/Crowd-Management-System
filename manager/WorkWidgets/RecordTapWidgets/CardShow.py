@@ -58,7 +58,7 @@ class CardShow(QtWidgets.QWidget):
                 self.img_button_list[index].setIconSize(QtCore.QSize(30,30))
                 self.img_button_list[index].setObjectName("img_button_list {}".format(index))
                 self.show_table.setCellWidget(index,0, self.img_button_list[index])
-                collist = self.show_table.horizontalHeader
+                collist = self.show_table.horizontal_list
                 for index_col,colnum in enumerate(collist):
                     if not index_col == 0:
                         self.show_table.setItem(index,index_col,QtWidgets.QTableWidgetItem(record[colnum]))
@@ -98,9 +98,8 @@ class CardShow(QtWidgets.QWidget):
         self.execute_query.return_sig.connect(self.query_img_followUp)
     
     def query_img_followUp(self,response):
-        response_ = json.loads(response)
-        print(type(response_))
-        self.image_widget.decode_image(response_["data"])
+        image = json.loads(response)
+        self.image_widget.decode_image(image["data"])
         
         
 class ImageWidget(QtWidgets.QWidget):
@@ -130,8 +129,9 @@ class ImageWidget(QtWidgets.QWidget):
 class showtable(QtWidgets.QTableWidget):
     def __init__(self):
         super().__init__()
-        self.horizontalHeader = ["img_binary","card_no","swipe_time","status","client_no"]
+        self.horizontal_list = ["img_binary","card_no","swipe_time","status","client_no"]
         self.refresh()
+        self.horizontalHeader().setSectionResizeMode(QtWidgets.QHeaderView.Stretch)
         self.setEditTriggers(self.NoEditTriggers)
         self.setStyleSheet("""QTableWidget::item{color:white};
                                         font: bold 10px;
@@ -139,9 +139,8 @@ class showtable(QtWidgets.QTableWidget):
         
     def refresh(self):
         self.clear()
-        self.setColumnCount(len(self.horizontalHeader))
-        self.setHorizontalHeaderLabels(self.horizontalHeader)
-        self.setColumnWidth(0, 50)
+        self.setColumnCount(len(self.horizontal_list))
+        self.setHorizontalHeaderLabels(self.horizontal_list)
         self.setRowCount(0)
         
 class CalendarView(QtWidgets.QWidget):

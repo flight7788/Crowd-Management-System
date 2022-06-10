@@ -16,7 +16,21 @@ class StuAdd(QtWidgets.QWidget):
         self.cardid_input = LineEditComponent("")
         self.add_button = ButtonComponent("comfire")
         self.add_button.clicked.connect(lambda: self.add())
-        
+        self.add_button.setObjectName('add_button')
+        self.add_button.setStyleSheet(
+            """
+            QPushButton#add_button {
+                color: #FFFFFF;
+                border: 2px solid rgb(255, 255, 255);
+                border-radius: 10px;
+                padding: 5px;
+            }
+            QPushButton#add_button:hover {
+                background-color: rgb(200, 200, 200);
+                color: black;
+            }
+            """
+        )
         
         layout = QtWidgets.QHBoxLayout()
         work_layout = QtWidgets.QGridLayout()

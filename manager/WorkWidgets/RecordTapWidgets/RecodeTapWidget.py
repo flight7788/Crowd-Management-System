@@ -69,10 +69,10 @@ class MenuWidget(QtWidgets.QWidget):
         layout.addWidget(show_button, 0,0,1,1)
         layout.addWidget(query_button, 1,0,1,1)
         layout.addWidget(analysis_button, 2,0,1,1)
-        layout.setRowStretch(0,2)
-        layout.setRowStretch(1,2)
-        layout.setRowStretch(2,2)
-        layout.setRowStretch(2,4)
+        layout.setRowStretch(0,1)
+        layout.setRowStretch(1,1)
+        layout.setRowStretch(2,1)
+        layout.setRowStretch(3,7)
         
         self.setLayout(layout)
         
