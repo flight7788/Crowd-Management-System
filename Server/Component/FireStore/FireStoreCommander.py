@@ -1,7 +1,39 @@
 from firebase_admin import firestore
+from Component.Logger import Logger
+import threading
+
 
 class FireStoreCommander():  
    
+   
+   
+      # 子執行緒類別
+    class TranscationThread(threading.Thread):
+      def __init__(self, method, collection , data={}):
+        threading.Thread.__init__(self)
+        self.method  = method
+        self.collection = collection
+        self.data = data
+
+      def run(self):
+        if self.method == 'delete':
+          print('#Server :')
+          Logger().info("Start Transaction: method: {}, collection: {} , data {}".format(self.method,self.collection,self.data))
+          self.collection.delete()
+          Logger().info("Transacion End")
+          
+        if self.method == 'update':
+          Logger().info("Start Transaction: method: {}, collection: {} , data {}".format(self.method,self.collection,self.data))
+          self.collection.update(self.data)
+          Logger().info("Transacion End")
+          
+        if self.method == 'insert':
+          Logger().info("Start Transaction: method: {}, collection: {} , data {}".format(self.method,self.collection,self.data))
+          self.collection.set(self.data)
+          Logger().info("Transacion End")
+          
+        
+    
     def __init__(self):
         self.client = firestore.client()
     
@@ -67,7 +99,8 @@ class FireStoreCommander():
         is_success = True
         error_message = ''
         try:
-          current_document.set(data)
+          self.TranscationThread('insert',current_document,data).start()
+          #current_document.set(data)
         except Exception as e:
           is_success = False
           error_message = '{}'.format(e)
@@ -81,7 +114,8 @@ class FireStoreCommander():
         is_success = True
         error_message = ''
         try:
-          current_document.update(data)
+          self.TranscationThread('update',current_document,data).start()
+          #current_document.update(data)
         except Exception as e:
           is_success = False
           error_message = '{}'.format(e)
@@ -95,7 +129,8 @@ class FireStoreCommander():
         is_success = True
         error_message = ''
         try:
-          current_document.delete()
+          self.TranscationThread('delete',current_document).start()
+          #current_document.delete()
         except Exception as e:
           is_success = False
           error_message = '{}'.format(e)

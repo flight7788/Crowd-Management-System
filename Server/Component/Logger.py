@@ -11,7 +11,7 @@ class Logger:
 
     def log(self,type,msg):
         with open(self.path,'a+') as log:
-            log.write('[{}] {} :{}\n'.format(type, datetime.now().strftime('%Y/%m/%d %H:%M:%S.%f'),msg))
+            log.write('[{}] {} :{}\n'.format(type, datetime.now().strftime('%Y/%m/%d %H:%M:%S.%f'), msg))
              
     def info(self, msg=''):
         self.log('INFO',msg)
