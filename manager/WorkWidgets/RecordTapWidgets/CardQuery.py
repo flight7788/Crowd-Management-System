@@ -14,11 +14,11 @@ class CardQuery(QtWidgets.QWidget):
         query_layout = QtWidgets.QHBoxLayout()
         
         self.show_label = LabelComponent(16,"")
-        stuid_label = LabelComponent(16,"School_ID:")
+        stuid_label = LabelComponent(16,"Student ID:")
         self.stuid_input = LineEditComponent("")
         query_button = ButtonComponent("")
         query_button.setIcon(QtGui.QIcon('./icon/search.png'))
-        query_button.setIconSize(QtCore.QSize(30,30))
+        query_button.setIconSize(QtCore.QSize(20,20))
         query_button.clicked.connect(self.query_action)
         
         query_layout.addWidget(stuid_label,alignment=QtCore.Qt.AlignVCenter)

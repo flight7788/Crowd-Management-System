@@ -46,5 +46,5 @@ class table(QtWidgets.QTableWidget):
     def refresh(self):
         self.clear()
         self.setColumnCount(len(self.horizontal_list))
-        self.setHorizontalHeaderLabels(self.horizontal_list)
+        self.setHorizontalHeaderLabels(['Student Id',"Student Name","Card IP"])
         self.setRowCount(0)

@@ -12,9 +12,9 @@ class CardShow(QtWidgets.QWidget):
         self.image_widget = ImageWidget()
         layout = QtWidgets.QVBoxLayout()
         functiom_layout = QtWidgets.QHBoxLayout()
-        one_day_button = ButtonComponent("past day")
-        one_week_button = ButtonComponent("past week")
-        custom_button = ButtonComponent("custom")
+        one_day_button = ButtonComponent("Past Day")
+        one_week_button = ButtonComponent("Past Week")
+        custom_button = ButtonComponent("Custom")
         one_day_button.clicked.connect(lambda: self.past_day_action())
         one_week_button.clicked.connect(lambda: self.past_week_action())
         custom_button.clicked.connect(lambda: self.custom_action())
@@ -140,7 +140,7 @@ class showtable(QtWidgets.QTableWidget):
     def refresh(self):
         self.clear()
         self.setColumnCount(len(self.horizontal_list))
-        self.setHorizontalHeaderLabels(self.horizontal_list)
+        self.setHorizontalHeaderLabels(["Image","Card ID","Swipe Time","Status","Client IP"])
         self.setRowCount(0)
         
 class CalendarView(QtWidgets.QWidget):

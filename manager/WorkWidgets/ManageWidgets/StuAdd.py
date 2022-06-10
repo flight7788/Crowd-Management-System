@@ -12,16 +12,29 @@ class StuAdd(QtWidgets.QWidget):
         self.name_input = LineEditComponent("")
         self.name_input.setObjectName("nameLineEdit")
         self.name_input.setStyleSheet("QLineEdit#nameLineEdit{color:white} QLineEdit:focus#nameLineEdit{background:rgb(150,150,150); color:white}")
-        stuid_label = LabelComponent(14,"School_ID")
+        stuid_label = LabelComponent(14,"Student ID")
         self.stuid_input = LineEditComponent("")
         self.stuid_input.setObjectName("stuidLineEdit")
         self.stuid_input.setStyleSheet("QLineEdit#stuidLineEdit{color:white} QLineEdit:focus#stuidLineEdit{background:rgb(150,150,150); color:white}")
-        cardid_label = LabelComponent(14,"Card_ID")
+        cardid_label = LabelComponent(14,"Card ID")
         self.cardid_input = LineEditComponent("")
         self.cardid_input.setObjectName("cardidLineEdit")
         self.cardid_input.setStyleSheet("QLineEdit#cardidLineEdit{color:white} QLineEdit:focus#cardidLineEdit{background:rgb(150,150,150); color:white}")
-        self.add_button = ButtonComponent("comfire")
+        self.add_button = ButtonComponent("Confirm")
         self.add_button.clicked.connect(lambda: self.add())
+        self.add_button.setObjectName('add_button')
+        self.add_button.setStyleSheet("""
+            QPushButton#add_button{
+                border: 2px solid rgb(255, 255, 255);
+                border-radius: 10px;
+                color: white;
+            }
+            
+            QPushButton#add_button:hover {
+                background-color: rgb(200, 200, 200);
+                color: black;
+            }
+        """)
 
         layout = QtWidgets.QHBoxLayout()
         work_layout = QtWidgets.QGridLayout()
@@ -32,17 +45,16 @@ class StuAdd(QtWidgets.QWidget):
         work_layout.addWidget(cardid_label, 2,0,1,1,alignment=QtCore.Qt.AlignVCenter)
         work_layout.addWidget(self.cardid_input, 2,1,1,2)
         work_layout.addWidget(self.add_button, 3,0,1,1)
-        work_layout.setColumnStretch(0, 1)
-        work_layout.setColumnStretch(1, 8)
-        work_layout.setColumnStretch(2, 1)
+        work_layout.setColumnStretch(0, 3)
+        work_layout.setColumnStretch(1, 7)
         work_layout.setRowStretch(0, 2)
         work_layout.setRowStretch(1, 2)
         work_layout.setRowStretch(2, 2)
         work_layout.setRowStretch(3, 2)
         work_layout.setRowStretch(4, 2)
         
-        layout.addLayout(work_layout,6)
-        layout.addWidget(self.show_label,4)
+        layout.addLayout(work_layout,7)
+        layout.addWidget(self.show_label,3)
         self.setLayout(layout)
         
     def load(self):

@@ -34,7 +34,7 @@ class HeaderWidget(QtWidgets.QWidget):
         super().__init__()
         self.backhome = backhome
         layout = QtWidgets.QHBoxLayout()
-        header_label = LabelComponent(16,"SwipeReport")
+        header_label = LabelComponent(16,"Swipe Report")
         backhome_botton = ButtonComponent("Home")
         backhome_botton.clicked.connect(lambda: self.backhome("home"))
         
@@ -53,9 +53,9 @@ class MenuWidget(QtWidgets.QWidget):
         super().__init__()
         self.taprecord_widget = update_widget
         layout = QtWidgets.QGridLayout()
-        query_button = ButtonComponent(" search")
-        show_button = ButtonComponent(" report")
-        analysis_button = ButtonComponent(" analysis")
+        query_button = ButtonComponent(" Search")
+        show_button = ButtonComponent(" Report")
+        analysis_button = ButtonComponent(" Analysis")
         query_button.clicked.connect(lambda: self.taprecord_widget("query"))
         show_button.clicked.connect(lambda: self.taprecord_widget("show"))
         analysis_button.clicked.connect(lambda: self.taprecord_widget("analysis"))

@@ -57,18 +57,6 @@ class MenuWidget(QtWidgets.QWidget):
         backhome_botton.setIconSize(QtCore.QSize(25,25))
         self.refresh_botton.setIcon(QtGui.QIcon('./icon/refresh.png'))
         self.refresh_botton.setIconSize(QtCore.QSize(25,25))
-        self.refresh_botton.setObjectName('refresh_botton')
-        self.refresh_botton.setStyleSheet("""
-            QPushButton#refresh_botton{
-                border-radius: 10px;
-                color: white;
-            }
-            
-            QPushButton#refresh_botton:hover {
-                background-color: rgb(200, 200, 200);
-                color: black;
-            }
-        """)
         
         layout.addWidget(self.show_botton)
         layout.addWidget(label)

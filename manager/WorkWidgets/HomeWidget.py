@@ -11,9 +11,9 @@ class HomeWidget(QtWidgets.QWidget):
         layout = QtWidgets.QVBoxLayout()
         function_layout = QtWidgets.QHBoxLayout()
         
-        header_label = LabelComponent(28,"人員進出紀錄管理系統")
-        person_botton = ButtonComponent("人員管理")
-        tapcard_botton = ButtonComponent("刷卡報表")
+        header_label = LabelComponent(20,"Student Access Management System")
+        person_botton = ButtonComponent(" Personnel\n management")
+        tapcard_botton = ButtonComponent("Swipe Report")
         person_botton.clicked.connect(lambda: self.update_widget_callback("ManageStu"))
         tapcard_botton.clicked.connect(lambda: self.update_widget_callback("RecodeTap"))
         person_botton.setIcon(QtGui.QIcon('./icon/personnel_management.png'))
@@ -34,8 +34,8 @@ class HomeWidget(QtWidgets.QWidget):
                 color: #FFFFFF;
                 border: 5px solid rgb(255, 255, 255);
                 border-radius: 10px;
-                padding: 50px;
-                font: bold 40px;
+                padding: 40px;
+                font: bold 28px;
             }
             QPushButton#person_botton:hover {
                 background-color: rgb(200, 200, 200);
@@ -51,7 +51,7 @@ class HomeWidget(QtWidgets.QWidget):
                 border: 5px solid rgb(255, 255, 255);
                 border-radius: 10px;
                 padding: 50px;
-                font: bold 40px;
+                font: bold 36px;
             }
             QPushButton#tapcard_botton:hover {
                 background-color: rgb(200, 200, 200);
