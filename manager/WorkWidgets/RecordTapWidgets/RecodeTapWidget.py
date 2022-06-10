@@ -65,6 +65,51 @@ class MenuWidget(QtWidgets.QWidget):
         show_button.setIconSize(QtCore.QSize(30,40))
         analysis_button.setIcon(QtGui.QIcon('./icon/analysis.png'))
         analysis_button.setIconSize(QtCore.QSize(30,40))
+        query_button.setObjectName("query_button")
+        query_button.setStyleSheet("""
+            QPushButton#query_button{
+                border: 2px solid rgb(255, 255, 255);
+                border-right: none;
+                border-left: none;
+                border-top: none;
+                border-radius: 10px;
+                color: white;
+            }
+            QPushButton#query_button:hover {
+                background-color: rgb(200, 200, 200);
+                color: black;
+            }
+        """)
+        show_button.setObjectName("show_button")
+        show_button.setStyleSheet("""
+            QPushButton#show_button{
+                border: 2px solid rgb(255, 255, 255);
+                border-right: none;
+                border-left: none;
+                border-top: none;
+                border-radius: 5px;
+                color: white;
+            }
+            QPushButton#show_button:hover {
+                background-color: rgb(200, 200, 200);
+                color: black;
+            }
+        """)
+        analysis_button.setObjectName("analysis_button")
+        analysis_button.setStyleSheet("""
+            QPushButton#analysis_button{
+                border: 2px solid rgb(255, 255, 255);
+                border-right: none;
+                border-left: none;
+                border-top: none;
+                border-radius: 10px;
+                color: white;
+            }
+            QPushButton#analysis_button:hover {
+                background-color: rgb(200, 200, 200);
+                color: black;
+            }
+        """)
         
         layout.addWidget(show_button, 0,0,1,1)
         layout.addWidget(query_button, 1,0,1,1)
