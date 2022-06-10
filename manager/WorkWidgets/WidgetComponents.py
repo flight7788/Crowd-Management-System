@@ -8,7 +8,7 @@ class LabelComponent(QtWidgets.QLabel):
         self.setWordWrap(True)
         self.setAlignment(QtCore.Qt.AlignLeft)
         self.setFont(QtGui.QFont("微軟正黑體", font_size, QtGui.QFont.Bold))
-        self.setStyleSheet("color: rgb(255, 255, 255);")
+        self.setStyleSheet("color: white")
         self.setText(content)
 
 
@@ -20,7 +20,7 @@ class LineEditComponent(QtWidgets.QLineEdit):
         self.setMinimumHeight(30)
         self.setMaximumWidth(width)
         self.setFont(QtGui.QFont("微軟正黑體", font_size))
-        self.setStyleSheet("color: rgb(255, 255, 255);")
+        self.setStyleSheet("color: white")
 
 
 class ButtonComponent(QtWidgets.QPushButton):
