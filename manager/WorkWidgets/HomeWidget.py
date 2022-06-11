@@ -12,7 +12,7 @@ class HomeWidget(QtWidgets.QWidget):
         function_layout = QtWidgets.QHBoxLayout()
         
         header_label = LabelComponent(20,"Student Access Management System")
-        person_botton = ButtonComponent(" Personnel\n management")
+        person_botton = ButtonComponent(" Crew\n management")
         tapcard_botton = ButtonComponent("Swipe Report")
         person_botton.clicked.connect(lambda: self.update_widget_callback("ManageStu"))
         tapcard_botton.clicked.connect(lambda: self.update_widget_callback("RecodeTap"))
@@ -35,7 +35,7 @@ class HomeWidget(QtWidgets.QWidget):
                 border: 5px solid rgb(255, 255, 255);
                 border-radius: 10px;
                 padding: 40px;
-                font: bold 28px;
+                font: bold 32px;
             }
             QPushButton#person_botton:hover {
                 background-color: rgb(200, 200, 200);
