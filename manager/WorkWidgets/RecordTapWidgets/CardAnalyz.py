@@ -27,7 +27,7 @@ class CardAnalyz(QtWidgets.QWidget):
         current_datetime = now.toString("yyyy/MM/dd hh:mm:ss")
         past_datetime = now.addDays(-7).toString("yyyy/MM/dd hh:mm:ss")
         date = {'start_time':past_datetime, 'end_time':current_datetime}
-        self.execute_query = ExecuteCommand(command='query_logs',data=date)
+        self.execute_query = ExecuteCommand(command='query_logs_by_time',data=date)
         self.execute_query.start()
         self.execute_query.return_sig.connect(self.get_info_follwUp)
     

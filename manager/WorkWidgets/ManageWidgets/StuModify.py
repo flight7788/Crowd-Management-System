@@ -96,7 +96,7 @@ class StuModify(QtWidgets.QWidget):
         self.delete_widget.show_widget()
     
     def delet_confirm(self):
-        stuid = {"student_id":self.StuId_input.text()}
+        stuid = {"id":self.StuId_input.text()}
         self.execute_delete = ExecuteCommand(command='delete_stu',data=stuid)
         self.execute_delete.start()
         self.execute_delete.return_sig.connect(self.delete_followup)
@@ -110,9 +110,9 @@ class StuModify(QtWidgets.QWidget):
             self.show_label.setText(warning)
     
     def confirm_action(self):
-        stu_info = {"student_id":self.StuId_input.text(),
-                    "card_no":self.cardId_input.text(),
-                    "student_name":self.name_input.text()}
+        stu_info = {"id":self.StuId_input.text(),
+                    "name":self.cardId_input.text(),
+                    "card_no":self.name_input.text()}
         self.execute_confirm = ExecuteCommand(command='modify_stu',data=stu_info)
         self.execute_confirm.start()
         self.execute_confirm.return_sig.connect(self.confirm_followup)
@@ -129,8 +129,8 @@ class StuModify(QtWidgets.QWidget):
         self.load()
     
     def reloadInfo(self):
-        self.StuId_input.setText(self.stu_info['student_id'])
-        self.name_input.setText(self.stu_info["student_name"])
+        self.StuId_input.setText(self.stu_info['id'])
+        self.name_input.setText(self.stu_info["name"])
         self.cardId_input.setText(self.stu_info["card_no"])
         
     def getinfo(self,student):
