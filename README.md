@@ -46,9 +46,8 @@ and have the record that can be output as a CSV file.
 - Python 3.7:
     https://www.python.org/downloads/release/python-370/ 
 
-#### Installation
-
-   Just excute: pip install -r requirement.txt
+#### Installation 
+- Just execute: pip install -r requirement.txt
 
 #### Run steps 
     1. "git clone" the project. 
