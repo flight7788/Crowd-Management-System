@@ -69,9 +69,9 @@ class StuAdd(QtWidgets.QWidget):
         card_no = self.cardid_input.text()
         student_name = self.name_input.text()
         if (student_id and card_no and student_name):
-            stu_info = {'student_id': student_id,
-                        'card_no': card_no,
-                        'student_name': student_name}
+            stu_info = {'id': student_id,
+                        'name': card_no,
+                        'card_no': student_name}
             self.execute_query = ExecuteCommand(command='add_stu',data=stu_info)
             self.execute_query.start()
             self.execute_query.return_sig.connect(self.add_followUp)

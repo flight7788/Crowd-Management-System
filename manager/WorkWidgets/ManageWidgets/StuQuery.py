@@ -32,7 +32,7 @@ class StuQuery(QtWidgets.QWidget):
     def query_action(self):
         stuid = self.stuid_input.text()
         if len(stuid) > 0:
-            query_data = {'student_id':stuid}
+            query_data = {'id':stuid}
             self.execute_query = ExecuteCommand(command='query_stu_profile',data=query_data)
             self.execute_query.start()
             self.execute_query.return_sig.connect(self.query_followUp)

@@ -37,7 +37,7 @@ class CardShow(QtWidgets.QWidget):
     
     def show_logs(self,start_time,end_time):
         date = {'start_time': start_time, 'end_time': end_time}
-        self.execute_query = ExecuteCommand(command='query_logs',data=date)
+        self.execute_query = ExecuteCommand(command='query_logs_by_time',data=date)
         self.execute_query.start()
         self.execute_query.return_sig.connect(self.show_followUp)
         
@@ -93,7 +93,7 @@ class CardShow(QtWidgets.QWidget):
         
     def query_img_action(self,img_binary):
         data = {'file_name':img_binary}
-        self.execute_query = ExecuteCommand(command='query_image_binary',data=data)
+        self.execute_query = ExecuteCommand(command='query_img',data=data)
         self.execute_query.start()
         self.execute_query.return_sig.connect(self.query_img_followUp)
     
