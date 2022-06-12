@@ -1,19 +1,20 @@
+from tkinter import SW
 from Component.FireStore.FireStoreConnector import FireStoreInitializer
 from Component.SocketServer import SocketServer
 from Component.MessageProcessor import MessageProcessor
 from Component.Logger import Logger
-from Service.QueryImgBinaryService import QueryImgBinary
-from Service.QueryStuService import QueryStu
-from Service.QueryCardService import QueryCard
-from Service.SwipeService import Swipe
-from Service.ManualCheckService import ManualCheck
+from Service.QueryImgService import QueryImg
+from Service.QueryStuLogsService import QueryStuLogs
+from Service.CheckMemberService import CheckMember
+from Service.SwipeCardService import SwipeCard
+from Service.ManualCtrlService import ManualCtrl
 from Service.QueryStuProfileService import QueryStuProfile
 from Service.AddStuService import AddStu
 from Service.DeleteStuService import DeleteStu
 from Service.ModifyStuService import ModifyStu
 from Service.QueryAllStuService import QueryAllStu
-from Service.QueryLogsService import QueryLogs
-from Service.QueryImgBinaryService import QueryImgBinary
+from Service.QueryLogsByTimeService import QueryLogsByTime
+from Service.QueryImgService import QueryImg
 
 
 FIRESTORE_KEYCHAIN = "connection_info.json"
@@ -22,17 +23,17 @@ PORT = 28888
 
 
 FUNCTION_METHOD = {
-      'query_stu' : QueryStu,
-      'query_card' :  QueryCard,
-      'swipe' : Swipe,
-      'manual_check' : ManualCheck,
+      'query_stu_logs' : QueryStuLogs,
+      'check_member' :  CheckMember,
+      'swipe_card' : SwipeCard,
+      'manual_ctrl' : ManualCtrl,
       'query_stu_profile' : QueryStuProfile,
       'add_stu' : AddStu,
       'delete_stu' : DeleteStu,
       'modify_stu' : ModifyStu,
       'query_all_stu' : QueryAllStu,
-      'query_logs' : QueryLogs,
-      'query_image_binary' : QueryImgBinary
+      'query_logs_by_time' : QueryLogsByTime,
+      'query_img' : QueryImg
 }
 
 def receive_handler(messages):

@@ -16,9 +16,9 @@ class StudentProfile():
         
         return self.commander.query(self.COLLECTION_NAME,id) 
     
-    def get_a_student_by_student_id(self,student_id):   
+    def get_a_student_by_student_id(self,id):   
         
-        query = self.commander.query(self.COLLECTION_NAME, column_name='student_id' ,key_word = student_id)
+        query = self.commander.query(self.COLLECTION_NAME, column_name='id' ,key_word = id)
         
         if (query['is_success'] and len(query['data']) >0 ):
             data_id = next(iter(query['data']))
@@ -40,16 +40,16 @@ class StudentProfile():
         
         return {'is_success' : False ,  'message' : 'not found'}
     
-    def update_a_student(self, id , student_name='', card_no=''):
+    def update_a_student(self, id , name='', card_no=''):
         
-        data = {'student_name':student_name, 'card_no': card_no}
+        data = {'name':name, 'card_no': card_no}
         
         return self.commander.update(self.COLLECTION_NAME,id,data) 
         
         
-    def add_student(self,student_name='',card_no='',student_id=''):
+    def add_student(self,name='',card_no='',id=''):
         
-        data = {'student_name':student_name,'card_no': card_no , 'student_id' : student_id}
+        data = {'name':name,'card_no': card_no , 'id' : id}
         
         return self.commander.insert(self.COLLECTION_NAME, data) 
         

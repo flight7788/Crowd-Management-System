@@ -5,14 +5,14 @@ class ModifyStu(MessageProcessor):
         
     def execute(self,params=[]):
     
-        if ('student_id' in params  and 'student_name' in params and 'card_no' in params):
-            student_id = params['student_id']
-            student_name = params['student_name']
+        if ('id' in params  and 'name' in params and 'card_no' in params):
+            id = params['id']
+            name = params['name']
             card_no = params['card_no']
             
-            student_profile = StudentProfile().get_a_student_by_student_id(student_id = student_id)
+            student_profile = StudentProfile().get_a_student_by_student_id(id = id)
             if not student_profile['is_success'] :
-                 return self.return_fail_with_reason('Student id {} is not exists'.format(student_id))
+                 return self.return_fail_with_reason('ID {} is not exists'.format(id))
              
             # card_no_profile = StudentProfile().get_a_student_by_card_no(card_no = card_no)
             # if card_no_profile['is_success'] :
@@ -20,7 +20,7 @@ class ModifyStu(MessageProcessor):
               
      
             profile_id = student_profile['data']['id']
-            update_student = StudentProfile().update_a_student(id = profile_id, student_name=student_name,card_no=card_no)
+            update_student = StudentProfile().update_a_student(id = profile_id, name=name,card_no=card_no)
             
             #check if card_no exists
             if not update_student['is_success'] :
@@ -28,6 +28,6 @@ class ModifyStu(MessageProcessor):
     
             return self.return_success()
         
-        return self.return_fail_with_reason('student_id , student_name , card_no is required')
+        return self.return_fail_with_reason('id , name , card_no is required')
 
 

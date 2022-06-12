@@ -71,8 +71,8 @@ class SocketServer(Thread):
                     show_dict =  copy.deepcopy(message)
                     
                     if show_dict['command'] in ['swipe','manual_check'] :
-                       print(len(show_dict['parameters']['img_binary']))
-                       show_dict['parameters']['img_binary'] = 'list (uint8)'
+                       print(len(show_dict['parameters']['img']))
+                       show_dict['parameters']['img'] = 'list (uint8)'
                        
                     print('Server Receive # : {} from {}'.format(show_dict,address))
                     Logger().info('Server Receive # : {} from {}'.format(show_dict,address))

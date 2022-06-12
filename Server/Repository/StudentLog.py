@@ -20,9 +20,9 @@ class StudentLog():
         
         return self.commander.query(self.COLLECTION_NAME,id) 
         
-    def add_log(self, card_no='' , img_binary='' , client_no='' , status=''  ,  swipe_time='' ):
+    def add_log(self, card_no='' , img='' , client_IP='' , status=''  ,  time='' ):
         
-        data = {'card_no':card_no,'img_binary': img_binary,'client_no': client_no ,'status':status , 'swipe_time': swipe_time}
+        data = {'card_no':card_no,'img': img,'client_IP': client_IP ,'action':status , 'time': time}
         
         return self.commander.insert(self.COLLECTION_NAME, data) 
         
