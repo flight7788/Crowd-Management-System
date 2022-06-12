@@ -1,33 +1,40 @@
-from Component.FireStore.FireStoreCommander import FireStoreCommander
-
-class StudentLog():  
+from Component.Database.DBCommander import DBCommander
+class StudentLog(DBCommander):  
     
-    COLLECTION_NAME = 'student_log'
-    
-    def __init__(self): 
-        
-        self.commander = FireStoreCommander()
-
     def get_logs(self):
         
-        return self.commander.query(self.COLLECTION_NAME)
+        command = "SELECT a.*,b.name,b.id FROM logs a join profile b on a.card_no = b.card_no order by a.data_id ;"
+        
+        return self.query_data(command)
+    
+    
+    def get_last_log_by_stu_id(self,id):
+        
+        command = "SELECT a.*,b.name,b.id FROM logs a join profile b on a.card_no = b.card_no where b.id = '{}' order by a.data_id desc  limit 1 ;".format(id)
+        
+        return self.query_data(command)
     
     def get_logs_by_card_no(self,card_no):
         
-        return self.commander.query(self.COLLECTION_NAME,column_name='card_no',key_word = card_no)
+        command = "SELECT a.*,b.name,b.id FROM logs a join profile b on a.card_no = b.card_no where a.card_no = '{}' order by a.data_id ;".format(card_no)
+        
+        return self.query_data(command)
         
     def get_a_log(self,id):   
         
-        return self.commander.query(self.COLLECTION_NAME,id) 
+        command = "SELECT a.*,b.name,b.id FROM logs a join profile b on a.card_no = b.card_no where a.data_id = '{}' order by a.data_id  limit 1  ;".format(id)
         
-    def add_log(self, card_no='' , img='' , client_IP='' , status=''  ,  time='' ):
+        return self.query_data(command)
         
-        data = {'card_no':card_no,'img': img,'client_IP': client_IP ,'action':status , 'time': time}
+    def add_log(self, card_no='' , img='' , client_IP='' , action=''  ,  time='' ):
         
-        return self.commander.insert(self.COLLECTION_NAME, data) 
+        
+        command = "INSERT INTO logs (action,card_no,client_IP,img,time) VALUES  ('{}','{}','{}','{}','{}');".format(action,card_no,client_IP,img,time)
+        return self.execute(command)
+        
         
     def del_log(self,id):
+        command = "delete from logs where data_id = '{}' ;".format(id)
         
-        return self.commander.delete(self.COLLECTION_NAME,id)
-        
-        
+        return self.execute(command)
+    

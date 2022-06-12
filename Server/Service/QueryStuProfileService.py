@@ -10,11 +10,11 @@ class QueryStuProfile(MessageProcessor):
             
             result = StudentProfile().get_a_student_by_student_id(id=id)
             
-            if not result['is_success'] :
-                return self.return_fail_with_reason(result['message'])
-            
-            if result['is_success'] and len(result['data'])>0 :
-                return self.return_success_with_data(result['data'])
+    
+            if  len(result)>0 :
+                return self.return_success_with_data(result)
+            else:
+                return self.return_fail_with_not_found()
             
         return self.return_fail_with_reason('id  is required')
 

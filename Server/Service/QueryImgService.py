@@ -18,7 +18,7 @@ class QueryImg(MessageProcessor):
                 else:
                     return  self.return_fail_with_reason('Image is broken')
             else:
-               return self.return_fail_with_reason('file not exist on server')
+               return self.return_fail_with_not_found()
             
         return self.return_fail_with_reason('file_name is required')
 

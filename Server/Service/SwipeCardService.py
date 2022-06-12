@@ -9,33 +9,32 @@ class SwipeCard(MessageProcessor):
     def execute(self,params=[]):
         
         if ('card_no' in params  and 'time' in params):
+            
             card_no = params['card_no']
             time = params['time']
+            client_ip = params['client_IP']
             img_binary =  params['img'] if ('img' in params)  else  ''
-            student_profile = StudentProfile().get_a_student_by_card_no(card_no = card_no)
             
+            student_profile = StudentProfile().get_a_student_by_card_no(card_no = card_no)
             
             #check datetime format is valid
             try:
                 datetime.strptime(time,'%Y/%m/%d %H:%M:%S')
             except ValueError as e:
-                self.return_fail_with_reason('Datetime format must like [YYYY/mm/dd HH:MM:SS], detail: {}'.format(e))
+                return self.return_fail_with_reason('Datetime format must like [YYYY/mm/dd HH:MM:SS], detail: {}'.format(e))
             
             #check if card_no exists
-            if not student_profile['is_success'] :
-                self.return_fail_with_reason('card_no is not found')
-
-            name = student_profile['data']['name']
-            id = student_profile['data']['id']
-            swipe_logs = StudentLog().get_logs_by_card_no(card_no)
-            action = self.getSwipeAction(swipe_logs)
+            if len(student_profile)==0 :
+                return self.return_fail_with_reason('card_no is not found')
+            name = student_profile[0]['name']
+            id = student_profile[0]['id']
+            action = self.getLastSwipeAction(id)
             
             img_file  =  ImageProcessor().decodeImg(img_binary)
             
-            result = StudentLog().add_log(card_no, img_file,'',action,time) 
+    
+            StudentLog().add_log(card_no, img_file, client_ip,action,time) 
             
-            if not result['is_success'] :
-                 return self.return_fail_with_reason(result['message'])
             
             return self.return_success_with_data({'name' : name ,'action' : action ,'id': id})
      
@@ -44,16 +43,13 @@ class SwipeCard(MessageProcessor):
 
         
     
-    def getSwipeAction(self,swipe_log):
+    def getLastSwipeAction(self,id):
     
+        swipe_log = StudentLog().get_last_log_by_stu_id(id=id)
         #if no data, means first swipe in
-        if(swipe_log['is_success'] and len(swipe_log['data'])>0):   
+        if(len(swipe_log)>0):   
                     
-          #find last log in query result
-          last_id = str(sorted([int(x) for x in swipe_log['data'].keys()])[-1])
-          last_data = swipe_log['data'][last_id]
-          
-          if last_data['action'] == 'in' :
+          if swipe_log[0]['action'] == 'in' :
             return 'out'
           else:
             return 'in'

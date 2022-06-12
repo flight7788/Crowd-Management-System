@@ -1,7 +1,7 @@
 from firebase_admin import firestore
 from Component.Logger import Logger
 import threading
-
+from datetime import datetime
 
 class FireStoreCommander():  
    
@@ -68,7 +68,15 @@ class FireStoreCommander():
         is_success = True
         error_message = ''
         try:
-          datas = self.client.collection(collection_name).get()
+          print('{} : {}'.format(datetime.now(),'start query froim firebase'))
+          
+          if(id!= None):
+            self.client.collection(collection_name).doc(id).get()
+          else:
+            datas = self.client.collection(collection_name).where(column_name ,'==' ,key_word).get()
+            
+          print('{} : {}'.format(datetime.now(),'end query froim firebase'))
+          
           for data in datas:
              query_data[data.id]=data.to_dict() 
            
@@ -140,7 +148,45 @@ class FireStoreCommander():
       
     # Pack data into a specific format
     def return_data_processor(self,is_success,message,data):
-        return {'is_success' : is_success , 'message' : message , 'data' : data }
+        return {'is_success' : is_success , 'message' : message , 'data' : data }\
+          
+          
+          
+    def query_last_one(self,collection_name, id = None, column_name = None , key_word = None):
+        query_data={}
+        is_success = True
+        error_message = ''
+        try:
+          print('{} : {}'.format(datetime.now(),'start query froim firebase'))
+          
+          if(id!= None):
+            self.client.collection(collection_name).doc(id).get()
+          else:
+            datas = self.client.collection(collection_name).where(column_name ,'==' ,key_word).order_by("time").limit_to_last(1).get()
+            
+          print('{} : {}'.format(datetime.now(),'end query froim firebase'))
+          
+          for data in datas:
+             query_data[data.id]=data.to_dict() 
+           
+          if column_name != None and key_word != None :
+             new_dict = {}
+             for key, value in query_data.items():
+                 if(column_name in value):
+                     if(value[column_name]==key_word):
+                         new_dict[key] = value
+             query_data = new_dict
+              
+          if id != None : 
+             query_data= query_data[str(id)]
+           
+           
+           
+        except Exception as e:
+          is_success = False
+          error_message = '{}'.format(e)
+        finally:
+          return self.return_data_processor(is_success,error_message,query_data)
       
 
      

@@ -10,10 +10,11 @@ class CheckMember(MessageProcessor):
             
             result = StudentProfile().get_a_student_by_card_no(card_no = card_no)
             
-            if not result['is_success'] :
-                return self.return_success_with_data({'is_exist':False})
+            if(len(result)>0):
             
-            return  self.return_success_with_data({'is_exist':True})
+                return  self.return_success_with_data({'is_exist':True})
+            else:
+                return  self.return_success_with_data({'is_exist':False})
             
         return self.return_fail_with_reason('card_no is required')
 

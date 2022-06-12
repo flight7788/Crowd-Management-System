@@ -70,13 +70,14 @@ class SocketServer(Thread):
                     
                     show_dict =  copy.deepcopy(message)
                     
-                    if show_dict['command'] in ['swipe','manual_check'] :
+                    if show_dict['command'] in ['swipe_card','manual_check'] :
                        print(len(show_dict['parameters']['img']))
                        show_dict['parameters']['img'] = 'list (uint8)'
                        
                     print('Server Receive # : {} from {}'.format(show_dict,address))
                     Logger().info('Server Receive # : {} from {}'.format(show_dict,address))
                     
+                    message['parameters']['client_IP'] = address[0]
                     reply_msg = self.handler(message)
                     connection.send(json.dumps(reply_msg).encode())
                     

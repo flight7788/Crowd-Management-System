@@ -15,6 +15,7 @@ from Service.ModifyStuService import ModifyStu
 from Service.QueryAllStuService import QueryAllStu
 from Service.QueryLogsByTimeService import QueryLogsByTime
 from Service.QueryImgService import QueryImg
+from Component.Database.DBConnection import DBConnection
 
 
 FIRESTORE_KEYCHAIN = "connection_info.json"
@@ -58,7 +59,10 @@ def receive_handler(messages):
 
 def main():
     
-    FireStoreInitializer(FIRESTORE_KEYCHAIN)
+    #FireStoreInitializer(FIRESTORE_KEYCHAIN)
+    
+    DBConnection.db_file_path = "local.db"
+    
     server = SocketServer(HOST, PORT , receive_handler)
     server.setDaemon=True
     server.serve()

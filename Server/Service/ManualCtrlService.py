@@ -23,19 +23,15 @@ class ManualCtrl(MessageProcessor):
             student_profile = StudentProfile().get_a_student_by_student_id(id = id)
             
             #check if card_no exists
-            if not student_profile['is_success'] :
+            if len(student_profile)==0 :
                 return self.return_fail_with_reason('student_id is not found')
-
-            name = student_profile['data']['name']
-            card_no = student_profile['data']['card_no']
+            
+            card_no = student_profile[0]['card_no']
+            name = student_profile[0]['name']
 
             img_file  =  ImageProcessor().decodeImg(img)
             
-            result = StudentLog().add_log(card_no,img_file,'', action ,time) 
-            
-            if not result['is_success'] :
-                return self.return_fail_with_reason(result['message'])
-
+            StudentLog().add_log(card_no,img_file,'', action ,time) 
             
             return  self.return_success_with_data({'name' : name})
         

@@ -10,19 +10,15 @@ class AddStu(MessageProcessor):
             card_no = params['card_no']
             
             student_id_profile = StudentProfile().get_a_student_by_student_id(id = id)
-            if student_id_profile['is_success'] :
+            if len(student_id_profile)>0:
                 return self.return_fail_with_reason('Student id {} alreay exists'.format(id))
              
             card_no_profile = StudentProfile().get_a_student_by_card_no(card_no = card_no)
-            if card_no_profile['is_success'] :
+            if len(card_no_profile)>0 :
                  return self.return_fail_with_reason('Card No {} alreay exists'.format(card_no))
             
             
-            add_student = StudentProfile().add_student(name = name,card_no = card_no,id = id)
-            
-            #check if card_no exists
-            if not add_student['is_success'] :
-                return self.return_fail_with_reason(add_student['message'])
+            StudentProfile().add_student(name = name,card_no = card_no,id = id)
 
             return  self.return_success()
         

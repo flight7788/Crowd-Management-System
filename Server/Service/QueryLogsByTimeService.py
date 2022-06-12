@@ -17,31 +17,23 @@ class QueryLogsByTime(MessageProcessor):
                 return self.return_fail_with_reason('Datetime format must like [YYYY/mm/dd HH:MM:SS], detail: {}'.format(e))
                 
             result = StudentLog().get_logs()
-            logs = result['data']   
-            sorted_key = sorted([int(x) for x in logs.keys()])
-            filter_data = list()
+            filter_data = list()     
             
-            for key in sorted_key:
-                key = str(key)
+            for data in result:
                 try:
-                    swipe_time = datetime.strptime(logs[key]['time'],'%Y/%m/%d %H:%M:%S')
+                    swipe_time = datetime.strptime(data['time'],'%Y/%m/%d %H:%M:%S')
                     if swipe_time>= start_time and swipe_time <= end_time :
-                        filter_data.append(logs[key])
+                        filter_data.append(data)
                     
                 except Exception as e:
-                    print('Ignore : Parse SwipeDateTime Error, {} , date id is {}'.format(e,key))
-                    Logger().debug('Ignore : Parse SwipeDateTime Error, {} , date id is {}'.format(e,key))
+                    Logger().debug('Ignore : Parse SwipeDateTime Error, {} , date is {}'.format(e,data))
                     pass
             
-            if result['is_success'] and len(filter_data)>0 :
+            if  len(filter_data)>0 :
                 return self.return_success_with_data(filter_data)
             
             else :
-                self.return_fail_with_reason('no data')
+                self.return_fail_with_not_found()
             
         return self.return_fail_with_reason('start_time and end_time is required')
 
-
-        
-    
-    
