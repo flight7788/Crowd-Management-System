@@ -29,7 +29,7 @@ command :
 
 	{command: query_logs }, parameter: {id}
 
-		return status:{OK/Fail}, data: {action(in/out), name , card_no , time}
+		return status:{OK/Fail}, data: {action(in/out), name ,id , card_no ,client_no , time}
 
 	{command: check_member }, parameter: {card_no}
 	
@@ -59,7 +59,7 @@ command :
 	#ex end : 2022/06/05 00:00:00
 	{command: query_logs , parameter : {start_time,end_time} }
 
-	return status:{OK/Fail}, data: {action(in/out), name , card_no , time}
+	return status:{OK/Fail}, data: {action(in/out), name ,id , card_no , time , client_no}
 	
 	
 	
