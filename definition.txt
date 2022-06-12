@@ -1,15 +1,10 @@
-table defination:
-
-
+table definition:
     student_profile:
         id , name , card_no 
 
-
     swipe_logs:
              
-        log_id , card_no , img , client_no , status  ,  time 
-    
-    
+        log_id , card_no , img , client_IP , action,  time 
    
    
 #important 
@@ -27,9 +22,9 @@ command :
 
 		return status:{OK/Fail}, data: {name}
 
-	{command: query_logs }, parameter: {id}
+	{command: query_stu_logs }, parameter: {id}
 
-		return status:{OK/Fail}, data: {action(in/out), name ,id , card_no ,client_no , time}
+		return status:{OK/Fail}, data: {action(in/out), name ,id , card_no ,client_IP , time}
 
 	{command: check_member }, parameter: {card_no}
 	
@@ -57,7 +52,7 @@ command :
 
 	#ex start : 2022/06/04 00:00:00 
 	#ex end : 2022/06/05 00:00:00
-	{command: query_logs , parameter : {start_time,end_time} }
+	{command: query_logs_by_time , parameter : {start_time,end_time} }
 
 	return status:{OK/Fail}, data: {action(in/out), name ,id , card_no , time , client_no}
 	
