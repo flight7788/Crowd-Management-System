@@ -38,6 +38,16 @@ and have the record that can be output as a CSV file.
 
 ---
 
+## Command with Server
+
+![Project Image](https://github.com/flight7788/Crowd-Management-System/blob/main/protocol_1.png)    
+![Project Image](https://github.com/flight7788/Crowd-Management-System/blob/main/protocol_2.png)  
+![Project Image](https://github.com/flight7788/Crowd-Management-System/blob/main/protocol_3.png)  
+
+[Back To The Top](#Crowd-Management-System)
+
+---
+
 ## How To Use
 
 #### Environment
