@@ -11,8 +11,8 @@ class SocketClient:
     def send_command(self, command, parameters={}):
         send_data = {'command': command, "parameters": parameters}
         self.client_socket.send(json.dumps(send_data).encode()) 
-        if command in ['swipe', 'manual_check']:
-            send_data['parameters']['img_binary'] = 'list (uint8)'
+        if command in ['swipe_card', 'manual_ctrl']:
+            send_data['parameters']['img'] = 'list (uint8)'
         print('     The client sent data => ', send_data)
 
     def wait_response(self):

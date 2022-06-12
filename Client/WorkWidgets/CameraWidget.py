@@ -88,9 +88,9 @@ class CameraWidget(QtWidgets.QWidget):
                                                         date_time, \
                                                         self.image_processor.encodeImg(self.image_processor.current_img))
                     if recv_data != False:
-                        self.status_widget.showPass('Enter' if recv_data['status']=='in' else 'Leave')
-                        self.status_widget.Name_val_label.setText(recv_data['student_name'])
-                        self.status_widget.ID_val_label.setText(recv_data['student_id'])
+                        self.status_widget.showPass('Enter' if recv_data['action']=='in' else 'Leave')
+                        self.status_widget.Name_val_label.setText(recv_data['name'])
+                        self.status_widget.ID_val_label.setText(recv_data['id'])
                         self.MyReader.sendPass()
                     else:
                         self.resultFail()

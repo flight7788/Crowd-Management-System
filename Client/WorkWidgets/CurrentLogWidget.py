@@ -63,8 +63,8 @@ class CurrentLogWidget(QtWidgets.QWidget):
                     info = ''
                     for data in recv_data:
                         info += "Time: {},  Name: {},  Card_No: {},  Status: {} \n".format(\
-                                data['swipe_time'], data['student_name'],
-                                data['card_no'], data['status'])
+                                data['time'], data['name'],
+                                data['card_no'], data['action'])
                     self.info_label.setText(info)
                     self.save_button.setDisabled(False)
             else:
