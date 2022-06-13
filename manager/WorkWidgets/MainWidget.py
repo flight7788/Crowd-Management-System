@@ -1,14 +1,14 @@
-from PyQt5 import QtWidgets, QtGui, QtCore
+from PyQt5 import QtWidgets,QtCore,QtWidgets
 from WorkWidgets.HomeWidget import HomeWidget
 from WorkWidgets.ManageWidgets.ManageStuWidget import ManageStuWidget
 from WorkWidgets.RecordTapWidgets.RecodeTapWidget import RecodeTapWidget
-from WorkWidgets.WidgetComponents import LabelComponent
-from WorkWidgets.WidgetComponents import ButtonComponent
+import os
 
 
 class MainWidget(QtWidgets.QStackedWidget):
-    def __init__(self):
+    def __init__(self,app_close):
         super().__init__()
+        self.app_close = app_close
         self.setStyleSheet("background-color: rgb(33, 43, 51)")
         self.widget_dict = {
             "home": self.addWidget(HomeWidget(self.update_widget)),
@@ -21,3 +21,12 @@ class MainWidget(QtWidgets.QStackedWidget):
         self.setCurrentIndex(self.widget_dict[name])
         current_widget = self.currentWidget()
         current_widget.load()
+    
+    def closeEvent(self, event):
+        self.app_close()
+        path = "./Image"
+        files = os.listdir(path)
+        for f in files:
+            if f.endswith(".png"):
+                os.remove(os.path.join(path,f))
+        

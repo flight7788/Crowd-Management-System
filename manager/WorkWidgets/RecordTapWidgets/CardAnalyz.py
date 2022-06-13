@@ -1,4 +1,3 @@
-from urllib.response import addinfo
 from PyQt5 import QtWidgets,QtCore
 import pyqtgraph as pg
 from pyqtgraph.Qt import QtGui
@@ -45,12 +44,12 @@ class CardAnalyz(QtWidgets.QWidget):
             stu_list = list()
             record_list = response['data']
             for student in record_list:
-                if student['status'] == 'in':
-                    key = student['swipe_time'][5:10]
+                if student['action'] == 'in':
+                    key = student['time'][5:10]
                     index = date_index.index(key)
                     repeat_y[index]+=1
-                    if not student['card_no'] in stu_list:
-                        stu_list.append(student['card_no'])
+                    if not student['id'] in stu_list:
+                        stu_list.append(student['id'])
                         non_repeat_y[index]+=1
         self.draw_plot(date_index,non_repeat_y,repeat_y)
                 

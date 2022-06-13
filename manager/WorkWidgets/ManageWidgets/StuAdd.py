@@ -12,10 +12,10 @@ class StuAdd(QtWidgets.QWidget):
         self.name_input = LineEditComponent("")
         self.name_input.setObjectName("nameLineEdit")
         self.name_input.setStyleSheet("QLineEdit#nameLineEdit{color:white} QLineEdit:focus#nameLineEdit{background:rgb(150,150,150); color:white}")
-        stuid_label = LabelComponent(14,"Student ID")
-        self.stuid_input = LineEditComponent("")
-        self.stuid_input.setObjectName("stuidLineEdit")
-        self.stuid_input.setStyleSheet("QLineEdit#stuidLineEdit{color:white} QLineEdit:focus#stuidLineEdit{background:rgb(150,150,150); color:white}")
+        id_label = LabelComponent(14,"ID")
+        self.id_input = LineEditComponent("")
+        self.id_input.setObjectName("idLineEdit")
+        self.id_input.setStyleSheet("QLineEdit#idLineEdit{color:white} QLineEdit:focus#idLineEdit{background:rgb(150,150,150); color:white}")
         cardid_label = LabelComponent(14,"Card ID")
         self.cardid_input = LineEditComponent("")
         self.cardid_input.setObjectName("cardidLineEdit")
@@ -38,10 +38,10 @@ class StuAdd(QtWidgets.QWidget):
 
         layout = QtWidgets.QHBoxLayout()
         work_layout = QtWidgets.QGridLayout()
-        work_layout.addWidget(name_label, 0,0,1,1,alignment=QtCore.Qt.AlignVCenter)
-        work_layout.addWidget(self.name_input, 0,1,1,2)
-        work_layout.addWidget(stuid_label, 1,0,1,1,alignment=QtCore.Qt.AlignVCenter)
-        work_layout.addWidget(self.stuid_input, 1,1,1,2)
+        work_layout.addWidget(id_label, 0,0,1,1,alignment=QtCore.Qt.AlignVCenter)
+        work_layout.addWidget(self.id_input, 0,1,1,2)
+        work_layout.addWidget(name_label, 1,0,1,1,alignment=QtCore.Qt.AlignVCenter)
+        work_layout.addWidget(self.name_input, 1,1,1,2)
         work_layout.addWidget(cardid_label, 2,0,1,1,alignment=QtCore.Qt.AlignVCenter)
         work_layout.addWidget(self.cardid_input, 2,1,1,2)
         work_layout.addWidget(self.add_button, 3,0,1,1)
@@ -59,25 +59,26 @@ class StuAdd(QtWidgets.QWidget):
         
     def load(self):
         self.name_input.setText("")
-        self.stuid_input.setText("")
+        self.id_input.setText("")
         self.cardid_input.setText("")
         self.show_label.setText("")
         
     def add(self):
         self.add_button.setEnabled(False)
-        student_id= self.stuid_input.text()
+        id= self.id_input.text()
         card_no = self.cardid_input.text()
-        student_name = self.name_input.text()
-        if (student_id and card_no and student_name):
-            stu_info = {'id': student_id,
-                        'name': card_no,
-                        'card_no': student_name}
+        name = self.name_input.text()
+        if (id and card_no and name):
+            stu_info = {'id': id,
+                        'name': name,
+                        'card_no': card_no}
             self.execute_query = ExecuteCommand(command='add_stu',data=stu_info)
             self.execute_query.start()
             self.execute_query.return_sig.connect(self.add_followUp)
         else:
             warning = "There are fields not entered"
             self.show_label.setText(warning)
+            self.add_button.setEnabled(True)
     
     def add_followUp(self,response):
         response = json.loads(response)

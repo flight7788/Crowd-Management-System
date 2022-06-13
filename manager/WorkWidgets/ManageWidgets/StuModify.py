@@ -129,12 +129,12 @@ class StuModify(QtWidgets.QWidget):
         self.load()
     
     def reloadInfo(self):
-        self.StuId_input.setText(self.stu_info['id'])
+        self.StuId_input.setText(self.stu_info["id"])
         self.name_input.setText(self.stu_info["name"])
         self.cardId_input.setText(self.stu_info["card_no"])
         
     def getinfo(self,student):
-        self.stu_info = student
+        self.stu_info = student[0]
         self.reloadInfo()
 
 class DeleteConfirmWidget(QtWidgets.QWidget):

@@ -14,6 +14,7 @@ class StuShow(QtWidgets.QWidget):
         scroll.setWidgetResizable(True)
         layout.addWidget(scroll)
         self.setLayout(layout)
+        self.refresh()
     
     def load(self):
         pass
@@ -36,7 +37,7 @@ class StuShow(QtWidgets.QWidget):
 class table(QtWidgets.QTableWidget):
     def __init__(self):
         super().__init__()
-        self.horizontal_list = ['student_id',"student_name","card_no"]
+        self.horizontal_list = ['id',"name","card_no"]
         self.refresh()
         self.horizontalHeader().setSectionResizeMode(QtWidgets.QHeaderView.Stretch)
         self.setEditTriggers(self.NoEditTriggers)
@@ -46,5 +47,5 @@ class table(QtWidgets.QTableWidget):
     def refresh(self):
         self.clear()
         self.setColumnCount(len(self.horizontal_list))
-        self.setHorizontalHeaderLabels(['Student Id',"Student Name","Card IP"])
+        self.setHorizontalHeaderLabels(['Id',"Name","Card IP"])
         self.setRowCount(0)

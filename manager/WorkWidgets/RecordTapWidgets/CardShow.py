@@ -23,7 +23,7 @@ class CardShow(QtWidgets.QWidget):
         functiom_layout.addWidget(one_week_button)
         functiom_layout.addWidget(custom_button)
         
-        self.show_table = showtable()
+        self.show_table = showtable(self.img_button_action)
         scroll = QtWidgets.QScrollArea()
         scroll.setWidget(self.show_table)
         scroll.setWidgetResizable(True)
@@ -43,25 +43,10 @@ class CardShow(QtWidgets.QWidget):
         
     def show_followUp(self,response):
         self.show_table.refresh()
-        self.img_button_list = list()
         response = json.loads(response)
         if response['status'] == 'OK':
             record_list = response['data']
-            img_binary_list = list()
-            for record in record_list:
-                img_binary_list.append(record['img_binary'])
-            for index,record in enumerate(record_list):
-                self.show_table.insertRow(index)
-                self.img_button_list.append(ButtonComponent(""))
-                self.img_button_list[index].clicked.connect(lambda: self.img_button_action(img_binary_list))
-                self.img_button_list[index].setIcon(QtGui.QIcon('./icon/img_detail.png'))
-                self.img_button_list[index].setIconSize(QtCore.QSize(30,30))
-                self.img_button_list[index].setObjectName("img_button_list {}".format(index))
-                self.show_table.setCellWidget(index,0, self.img_button_list[index])
-                collist = self.show_table.horizontal_list
-                for index_col,colnum in enumerate(collist):
-                    if not index_col == 0:
-                        self.show_table.setItem(index,index_col,QtWidgets.QTableWidgetItem(record[colnum]))
+            self.show_table.put_item_in_table(record_list)
         
     def call_back_action(self,parameters):
         self.show_followUp(parameters)
@@ -127,9 +112,10 @@ class ImageWidget(QtWidgets.QWidget):
         os.remove(self.picture)
 
 class showtable(QtWidgets.QTableWidget):
-    def __init__(self):
+    def __init__(self,img_button_action):
         super().__init__()
-        self.horizontal_list = ["img_binary","card_no","swipe_time","status","client_no"]
+        self.img_button_action =img_button_action
+        self.horizontal_list = ["img","name","id","card_no","action","time","client_IP"]
         self.refresh()
         self.horizontalHeader().setSectionResizeMode(QtWidgets.QHeaderView.Stretch)
         self.setEditTriggers(self.NoEditTriggers)
@@ -140,8 +126,31 @@ class showtable(QtWidgets.QTableWidget):
     def refresh(self):
         self.clear()
         self.setColumnCount(len(self.horizontal_list))
-        self.setHorizontalHeaderLabels(["Image","Card ID","Swipe Time","Status","Client IP"])
+        self.setHorizontalHeaderLabels(["Image","Name","ID","Card ID","Status","Swipe Time","Client IP"])
         self.setRowCount(0)
+    
+    def put_item_in_table(self,record_list):
+        self.img_button_list = list()
+        img_filename_list = list()  
+        for index,record in enumerate(record_list):
+            img_filename_list.append(record['img'])
+            # add row
+            self.insertRow(index)
+            # add button items
+            self.img_button_list.append(ButtonComponent(""))
+            self.img_button_list[index].clicked.connect(lambda: self.img_button_action(img_filename_list))
+            self.img_button_list[index].setIcon(QtGui.QIcon('./icon/img_detail.png'))
+            self.img_button_list[index].setIconSize(QtCore.QSize(30,30))
+            self.img_button_list[index].setObjectName("img_button_list {}".format(index))
+            self.setCellWidget(index,0, self.img_button_list[index])
+            # add others items
+            collist = self.horizontal_list
+            for index_col,colnum in enumerate(collist):
+                if not index_col == 0:
+                    item = QtWidgets.QTableWidgetItem(record[colnum])
+                    if record['action'] == "out":
+                        item.setBackground(QtGui.QColor(255, 128, 128))
+                    self.setItem(index,index_col,item)
         
 class CalendarView(QtWidgets.QWidget):
     def __init__(self,call_back_time):
@@ -151,6 +160,7 @@ class CalendarView(QtWidgets.QWidget):
         self.date =""
         self.call_back_time = call_back_time
         self.setWindowTitle('Calendar')
+        self.setWindowModality(QtCore.Qt.ApplicationModal)
         
         low_date = QtCore.QDate(2022, 1, 1)
         up_date = QtCore.QDate.currentDate()

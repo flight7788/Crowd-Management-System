@@ -11,12 +11,19 @@ class SocketClient:
         self.client_socket.connect((host, port))
  
     def send_command(self, command, parameters):
-        send_data = {'command': command,'parameter':parameters}
+        self.command = command
+        send_data = {'command': command,'parameters':parameters}
         print("The client sent data => {}".format(send_data))
         self.client_socket.send(json.dumps(send_data).encode())
 
     def wait_response(self):
         received_data = self.client_socket.recv(BUFFER_SIZE).decode()
         received_data = json.loads(received_data)
-        print("The client received data => {}".format(received_data))
+        if self.command == "query_img":
+            if received_data['status'] == "OK":
+                print("The client received data => {}".format({'status': 'OK', 'data': {'img': 'unit_8'}}))
+            else:
+                print("The client received data => {}".format(received_data))
+        else :
+            print("The client received data => {}".format(received_data))
         return received_data
