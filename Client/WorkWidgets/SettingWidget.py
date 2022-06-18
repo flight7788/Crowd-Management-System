@@ -84,6 +84,7 @@ class SettingWidget(QtWidgets.QWidget):
         self.selected_ip = None
         self.selected_port = None
         self.select_socket_client = None
+        self.update_setting = False
 
     def updateComboBox(self):
         self.combo_box_selectCAM.clear()
@@ -152,8 +153,14 @@ class SettingWidget(QtWidgets.QWidget):
 
         if status:
             self.status_label.setText('New setting is sucess !!')
+            self.update_setting = True
 
     def getNewSetting(self):
+        if self.update_setting != True:
+            if self.selected_ip != None and self.selected_port != None:
+                self.select_socket_client = SocketClient(self.selected_ip, self.selected_port)
+        else:
+            self.update_setting = False
         my_setting = {
             "COM": self.selected_COM,
             "CAM": self.selected_CAM,
