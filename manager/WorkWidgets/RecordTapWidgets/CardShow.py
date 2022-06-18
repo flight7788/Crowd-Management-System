@@ -126,7 +126,7 @@ class showtable(QtWidgets.QTableWidget):
     def refresh(self):
         self.clear()
         self.setColumnCount(len(self.horizontal_list))
-        self.setHorizontalHeaderLabels(["Image","Name","ID","Card ID","Status","Swipe Time","Client IP"])
+        self.setHorizontalHeaderLabels(["Image","Name","ID","Card No.","Status","Swipe Time","Client IP"])
         self.setRowCount(0)
     
     def put_item_in_table(self,record_list):

@@ -122,6 +122,7 @@ class buttonstyle():
             QPushButton#{}{{
                 background-color: {};
                 border-radius: 5px;
+                padding: 5px;
                 color: {};
             }}
             QPushButton#{}:hover {{

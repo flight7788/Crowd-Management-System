@@ -12,7 +12,7 @@ class HomeWidget(QtWidgets.QWidget):
         function_layout = QtWidgets.QHBoxLayout()
         
         header_label = LabelComponent(20,"Student Access Management System")
-        person_botton = ButtonComponent(" Crew\n management")
+        person_botton = ButtonComponent(" Crew\n Management")
         tapcard_botton = ButtonComponent("Swipe Report")
         person_botton.clicked.connect(lambda: self.update_widget_callback("ManageStu"))
         tapcard_botton.clicked.connect(lambda: self.update_widget_callback("RecodeTap"))

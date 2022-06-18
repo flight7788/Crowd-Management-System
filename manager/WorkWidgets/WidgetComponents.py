@@ -31,6 +31,7 @@ class ButtonComponent(QtWidgets.QPushButton):
         self.setStyleSheet("""
             QPushButton{
                 border-radius: 10px;
+                padding: 4px;
                 color: white;
             }
             QPushButton::hover {

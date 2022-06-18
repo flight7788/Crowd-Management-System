@@ -15,22 +15,87 @@ class StuModify(QtWidgets.QWidget):
         name_label = LabelComponent(16,"Name")
         self.name_input = LineEditComponent("")
         self.name_input.setObjectName("NameLineEdit")
-        cardId_label = LabelComponent(16,"Card ID")
+        cardId_label = LabelComponent(16,"Card No.")
         self.cardId_input = LineEditComponent("")
         self.cardId_input.setObjectName("CardIdLineEdit")
         self.modify_botton = ButtonComponent("modify")
         self.delete_botton = ButtonComponent("delete")
-        self.cancel_botton = ButtonComponent("cancle")
+        self.cancel_botton = ButtonComponent("cancel")
         self.confirm_botton = ButtonComponent("confirm")
-        self.backquery_botton = ButtonComponent("return")
+        self.backquery_botton = ButtonComponent(" Return")
         self.modify_botton.clicked.connect(lambda: self.modify_action())
         self.delete_botton.clicked.connect(lambda: self.delete_action())
         self.cancel_botton.clicked.connect(lambda: self.cancel())
         self.confirm_botton.clicked.connect(lambda: self.confirm_action())
         self.backquery_botton.clicked.connect(lambda: self.back_query('query'))
         self.backquery_botton.setIcon(QtGui.QIcon('./icon/return.png'))
-        self.backquery_botton.setIconSize(QtCore.QSize(30,30))
-        
+        self.backquery_botton.setIconSize(QtCore.QSize(25,25))
+        self.modify_botton.setStyleSheet( """
+            QPushButton{
+                border: 1px solid rgb(255, 255, 255);
+                border-color: white;
+                border-radius: 10px;
+                padding: 4px;
+                color: white;
+                
+            }
+            QPushButton::hover {
+                background-color: rgb(200, 200, 200);
+                color: black;
+            }
+        """)
+        self.delete_botton.setStyleSheet( """
+            QPushButton{
+                border: 1px solid rgb(255, 255, 255);
+                border-color: white;
+                border-radius: 10px;
+                padding: 4px;
+                color: white;
+            }
+            QPushButton::hover {
+                background-color: rgb(200, 200, 200);
+                color: black;
+            }
+        """)
+        self.cancel_botton.setStyleSheet( """
+            QPushButton{
+                border: 1px solid rgb(255, 255, 255);
+                border-color: white;
+                border-radius: 10px;
+                padding: 4px;
+                color: white;
+            }
+            QPushButton::hover {
+                background-color: rgb(200, 200, 200);
+                color: black;
+            }
+        """)
+        self.confirm_botton.setStyleSheet( """
+            QPushButton{
+                border: 1px solid rgb(255, 255, 255);
+                border-color: white;
+                border-radius: 10px;
+                padding: 4px;
+                color: white;
+            }
+            QPushButton#confirm::hover {
+                background-color: rgb(200, 200, 200);
+                color: black;
+            }
+        """)
+        self.backquery_botton.setStyleSheet( """
+            QPushButton{
+                border: 1px solid rgb(255, 255, 255);
+                border-color: white;
+                border-radius: 10px;
+                padding: 4px;
+                color: white;
+            }
+            QPushButton::hover {
+                background-color: rgb(200, 200, 200);
+                color: black;
+            }
+        """)
         layout = QtWidgets.QVBoxLayout()
         info_layout = QtWidgets.QGridLayout()
         info_layout.addWidget(StuId_label, 0,0,1,1,alignment=QtCore.Qt.AlignVCenter)
@@ -84,8 +149,8 @@ class StuModify(QtWidgets.QWidget):
     def modify_action(self):
         self.name_input.setReadOnly(False)
         self.cardId_input.setReadOnly(False)
-        self.name_input.setStyleSheet("QLineEdit#NameLineEdit{background:rgb(120,120,120); color:black;} QLineEdit:focus#NameLineEdit{background:rgb(220,220,220)};")
-        self.cardId_input.setStyleSheet("QLineEdit#CardIdLineEdit{background:rgb(120,120,120); color:black;} QLineEdit:focus#CardIdLineEdit{background:rgb(220,220,220)};")
+        self.name_input.setStyleSheet("QLineEdit{color:white;} QLineEdit:focus#NameLineEdit{background:rgb(220,220,220); color:black;};")
+        self.cardId_input.setStyleSheet("QLineEdit{color:white;} QLineEdit:focus{background:rgb(220,220,220); color:black;};")
         self.backquery_botton.hide()
         self.modify_botton.hide()
         self.delete_botton.hide()
