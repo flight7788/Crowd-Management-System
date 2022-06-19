@@ -14,10 +14,10 @@ class StuShow(QtWidgets.QWidget):
         scroll.setWidgetResizable(True)
         layout.addWidget(scroll)
         self.setLayout(layout)
-        self.refresh()
+        
     
     def load(self):
-        pass
+        self.refresh()
     
     def refresh(self):
         self.execute_query = ExecuteCommand(command='query_all_stu',data={})

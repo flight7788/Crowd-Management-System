@@ -10,16 +10,17 @@ class CardAnalyz(QtWidgets.QWidget):
         super().__init__()
         self.plt = pg.plot()
         self.plt.setTitle('Flow of people',**{'size': '18pt'})
-        self.plt.addLegend(offset=(100, 30))
+        legend=self.plt.addLegend()
+        legend.anchor(itemPos=(1,0), parentPos=(1,0), offset=(-10,10))
         layout = QtWidgets.QVBoxLayout()
         layout.addWidget(self.plt)
         self.setLayout(layout)
+        
     
     def load(self):
         self.plt.clear()
         self.QueryData()
         
-
     
     def QueryData(self):
         now = QtCore.QDateTime.currentDateTime()
@@ -45,6 +46,7 @@ class CardAnalyz(QtWidgets.QWidget):
             record_list = response['data']
             for student in record_list:
                 key = student['time'][5:10]
+                print(key)
                 if key in date_index:
                     index = date_index.index(key)
                     if student['action'] == 'in':
@@ -56,7 +58,7 @@ class CardAnalyz(QtWidgets.QWidget):
     def draw_plot(self,date_index,in_count,out_count):
         index_x = list(range(1,len(date_index)+1))
         out_count_barItem = pg.BarGraphItem(x = index_x, height = out_count, width = 0.2, brush=(107,200,224), name='Out Times')
-        in_count_barItem = pg.BarGraphItem(x = index_x, y0=out_count,height = in_count, width = 0.2, brush=(224,200,107), name='In Times')
+        in_count_barItem = pg.BarGraphItem(x = index_x,height = in_count, width = 0.2, brush=(224,200,107), name='In Times')
         self.plt.addItem(out_count_barItem)
         self.plt.addItem(in_count_barItem)
         self.plt.getAxis('bottom').setTicks([[(i, date_index[i-1]) for i in index_x]])

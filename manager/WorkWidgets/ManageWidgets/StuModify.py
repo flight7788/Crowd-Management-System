@@ -78,7 +78,7 @@ class StuModify(QtWidgets.QWidget):
                 padding: 4px;
                 color: white;
             }
-            QPushButton#confirm::hover {
+            QPushButton::hover {
                 background-color: rgb(200, 200, 200);
                 color: black;
             }
@@ -176,8 +176,8 @@ class StuModify(QtWidgets.QWidget):
     
     def confirm_action(self):
         stu_info = {"id":self.StuId_input.text(),
-                    "name":self.cardId_input.text(),
-                    "card_no":self.name_input.text()}
+                    "name":self.name_input.text(),
+                    "card_no":self.cardId_input.text()}
         self.execute_confirm = ExecuteCommand(command='modify_stu',data=stu_info)
         self.execute_confirm.start()
         self.execute_confirm.return_sig.connect(self.confirm_followup)
