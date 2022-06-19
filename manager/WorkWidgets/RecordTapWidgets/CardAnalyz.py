@@ -2,7 +2,7 @@ from PyQt5 import QtWidgets,QtCore
 from numpy import size
 import pyqtgraph as pg
 from pyqtgraph.Qt import QtGui
-from WorkWidgets.SocketClient.ClientControl import ExecuteCommand
+from SocketClient.ClientControl import ExecuteCommand
 import json
 
 class CardAnalyz(QtWidgets.QWidget):

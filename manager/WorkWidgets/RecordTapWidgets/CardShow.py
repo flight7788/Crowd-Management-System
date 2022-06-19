@@ -1,7 +1,7 @@
 from PyQt5 import QtWidgets,QtCore,QtGui
 from WorkWidgets.WidgetComponents import LabelComponent, LineEditComponent, ButtonComponent
-from WorkWidgets.SocketClient.ClientControl import ExecuteCommand
-from WorkWidgets.RecordTapWidgets.ImageProcessor import ImageProcessor
+from SocketClient.ClientControl import ExecuteCommand
+from Processor.ImageProcessor import ImageProcessor
 import datetime,os,json
 
 class CardShow(QtWidgets.QWidget):

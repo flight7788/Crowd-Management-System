@@ -1,7 +1,7 @@
 from PyQt5 import QtWidgets, QtGui, QtCore
 from WorkWidgets.WidgetComponents import LabelComponent
 from WorkWidgets.WidgetComponents import ButtonComponent
-from WorkWidgets.SocketClient.ClientControl import ExecuteCommand
+from SocketClient.ClientControl import ExecuteCommand
 import json
 
 class StuShow(QtWidgets.QWidget):

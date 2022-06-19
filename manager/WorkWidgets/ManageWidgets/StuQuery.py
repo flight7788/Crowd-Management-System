@@ -1,6 +1,6 @@
 from PyQt5 import QtWidgets, QtGui, QtCore
 from WorkWidgets.WidgetComponents import LabelComponent,LineEditComponent,ButtonComponent
-from WorkWidgets.SocketClient.ClientControl import ExecuteCommand
+from SocketClient.ClientControl import ExecuteCommand
 import json
 class StuQuery(QtWidgets.QWidget):
     def __init__(self,update_widget,getparam):

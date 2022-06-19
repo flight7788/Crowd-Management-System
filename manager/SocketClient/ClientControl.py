@@ -1,4 +1,4 @@
-from WorkWidgets.SocketClient.SocketClient import SocketClient
+from SocketClient.SocketClient import SocketClient
 from PyQt5.QtCore import pyqtSignal
 from PyQt5 import QtCore
 import json

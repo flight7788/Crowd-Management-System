@@ -2,7 +2,7 @@ from inspect import Parameter
 from PyQt5 import QtWidgets, QtGui, QtCore
 from WorkWidgets.WidgetComponents import LabelComponent,LineEditComponent
 from WorkWidgets.WidgetComponents import ButtonComponent
-from WorkWidgets.SocketClient.ClientControl import ExecuteCommand
+from SocketClient.ClientControl import ExecuteCommand
 import json
 
 class CardQuery(QtWidgets.QWidget):

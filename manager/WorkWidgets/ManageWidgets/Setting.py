@@ -1,8 +1,6 @@
 from PyQt5 import QtWidgets, QtGui, QtCore
 from WorkWidgets.ManageWidgets.StuModify import StuModify
 from WorkWidgets.ManageWidgets.StuQuery import StuQuery
-from WorkWidgets.WidgetComponents import LabelComponent
-from WorkWidgets.WidgetComponents import ButtonComponent
 
 class Setting(QtWidgets.QStackedWidget):
     def __init__(self):
