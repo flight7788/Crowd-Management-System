@@ -120,4 +120,9 @@ SOFTWARE.
 - Email - t110368004@ntut.org.tw
 - LAB - SPIE LAB, National Taipei University of Technology
 
+#### HE-YIYU
+
+- Email - t110368035@ntut.org.tw
+- LAB - IEEE LAB, National Taipei University of Technology
+
 [Back To The Top](#Crowd-Management-System)
