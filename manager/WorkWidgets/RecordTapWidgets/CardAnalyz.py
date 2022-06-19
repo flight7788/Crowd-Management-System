@@ -1,24 +1,21 @@
 from PyQt5 import QtWidgets,QtCore
-from numpy import size
 import pyqtgraph as pg
+import numpy as np
 from pyqtgraph.Qt import QtGui
 from SocketClient.ClientControl import ExecuteCommand
+from PyQt5.QtWidgets import QWidget
 import json
 
 class CardAnalyz(QtWidgets.QWidget):
     def __init__(self):
         super().__init__()
-        self.plt = pg.plot()
-        self.plt.setTitle('Flow of people',**{'size': '18pt'})
-        legend=self.plt.addLegend()
-        legend.anchor(itemPos=(1,0), parentPos=(1,0), offset=(-10,10))
+        self.graph = GraphWidget()
         layout = QtWidgets.QVBoxLayout()
-        layout.addWidget(self.plt)
+        layout.addWidget(self.graph.plt)
         self.setLayout(layout)
-        
     
     def load(self):
-        self.plt.clear()
+        self.graph.plt.clear()
         self.QueryData()
         
     
@@ -38,30 +35,38 @@ class CardAnalyz(QtWidgets.QWidget):
         out_count = [0]*days
         today = QtCore.QDate.currentDate()
         for i in range(days):
-            date = today.addDays(-6+i).toString("MM/dd")
+            date = today.addDays(-days+1+i).toString("MM/dd")
             date_index.append(date)
+            print(i,date)
         
         response = json.loads(response)
         if response['status'] == 'OK':
             record_list = response['data']
             for student in record_list:
                 key = student['time'][5:10]
-                print(key)
                 if key in date_index:
                     index = date_index.index(key)
                     if student['action'] == 'in':
                         in_count[index]+=1
                     elif student['action'] == 'out':
                         out_count[index]+=1
-        self.draw_plot(date_index,in_count,out_count)
+        self.graph.draw_plot(date_index,in_count,out_count)
                 
+
+class GraphWidget():
+    def __init__(self):
+        self.plt = pg.plot()
+        self.plt.setTitle('Flow of people',**{'size': '18pt'})
+        self.plt.addLegend(offset=(5,5))
+        
+        
     def draw_plot(self,date_index,in_count,out_count):
-        index_x = list(range(1,len(date_index)+1))
+        index_x = np.arange(7)
         out_count_barItem = pg.BarGraphItem(x = index_x, height = out_count, width = 0.2, brush=(107,200,224), name='Out Times')
-        in_count_barItem = pg.BarGraphItem(x = index_x,height = in_count, width = 0.2, brush=(224,200,107), name='In Times')
+        in_count_barItem = pg.BarGraphItem(x = index_x+0.22,height = in_count, width = 0.2, brush=(224,200,107), name='In Times')
         self.plt.addItem(out_count_barItem)
         self.plt.addItem(in_count_barItem)
-        self.plt.getAxis('bottom').setTicks([[(i, date_index[i-1]) for i in index_x]])
+        self.plt.getAxis('bottom').setTicks([[(i, date_index[i]) for i in range(0,7)]])
         
         font = QtGui.QFont()
         font.setPixelSize(20)
