@@ -1,6 +1,4 @@
 from PyQt5 import QtWidgets, QtGui, QtCore
-from WorkWidgets.WidgetComponents import LabelComponent
-from WorkWidgets.WidgetComponents import ButtonComponent
 from SocketClient.ClientControl import ExecuteCommand
 import json
 
@@ -17,9 +15,6 @@ class StuShow(QtWidgets.QWidget):
         
     
     def load(self):
-        self.refresh()
-    
-    def refresh(self):
         self.execute_query = ExecuteCommand(command='query_all_stu',data={})
         self.execute_query.start()
         self.execute_query.return_sig.connect(self.show_followUp)

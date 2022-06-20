@@ -62,8 +62,8 @@ class GraphWidget():
         
     def draw_plot(self,date_index,in_count,out_count):
         index_x = np.arange(7)
-        out_count_barItem = pg.BarGraphItem(x = index_x, height = out_count, width = 0.2, brush=(107,200,224), name='Out Times')
-        in_count_barItem = pg.BarGraphItem(x = index_x+0.22,height = in_count, width = 0.2, brush=(224,200,107), name='In Times')
+        out_count_barItem = pg.BarGraphItem(x = index_x-0.11, height = out_count, width = 0.2, brush=(107,200,224), name='Out Times')
+        in_count_barItem = pg.BarGraphItem(x = index_x+0.11,height = in_count, width = 0.2, brush=(224,200,107), name='In Times')
         self.plt.addItem(out_count_barItem)
         self.plt.addItem(in_count_barItem)
         self.plt.getAxis('bottom').setTicks([[(i, date_index[i]) for i in range(0,7)]])
