@@ -245,12 +245,16 @@ class CalendarView(QtWidgets.QWidget):
             end_time = self.end_time_edit.time().toString("hh:mm:ss")
             start_datetime = start_date+" "+start_time
             end_datetime = end_date+" "+end_time
-            date_start = datetime.datetime.strptime(start_datetime, '%Y/%m/%d %H:%M:%S')
-            date_end = datetime.datetime.strptime(end_datetime, '%Y/%m/%d %H:%M:%S')
-            if date_start<date_end:
-                self.SentDate(start_datetime,end_datetime)
+            try :
+                date_start = datetime.datetime.strptime(start_datetime, '%Y/%m/%d %H:%M:%S')
+                date_end = datetime.datetime.strptime(end_datetime, '%Y/%m/%d %H:%M:%S')
+            except:
+                warning ="Type Error"
             else:
-                warning = "The start time must be earlier than the end time"
+                if date_start<date_end:
+                    self.SentDate(start_datetime,end_datetime)
+                else:
+                    warning = "The start time must be earlier than the end time"
         self.show_label.setText(warning)
             
             
