@@ -3,7 +3,7 @@ class StudentLog(DBCommander):
     
     def get_logs(self):
         
-        command = "SELECT a.*,b.name,b.id FROM logs a join profile b on a.card_no = b.card_no order by a.data_id ;"
+        command = "SELECT a.*,b.name,b.id FROM logs a join profile b on a.card_no = b.card_no order by a.data_id desc ;"
         
         return self.query_data(command)
     
@@ -16,13 +16,13 @@ class StudentLog(DBCommander):
     
     def get_logs_by_card_no(self,card_no):
         
-        command = "SELECT a.*,b.name,b.id FROM logs a join profile b on a.card_no = b.card_no where a.card_no = '{}' order by a.data_id ;".format(card_no)
+        command = "SELECT a.*,b.name,b.id FROM logs a join profile b on a.card_no = b.card_no where a.card_no = '{}' order by a.data_id desc ;".format(card_no)
         
         return self.query_data(command)
         
     def get_a_log(self,id):   
         
-        command = "SELECT a.*,b.name,b.id FROM logs a join profile b on a.card_no = b.card_no where a.data_id = '{}' order by a.data_id  limit 1  ;".format(id)
+        command = "SELECT a.*,b.name,b.id FROM logs a join profile b on a.card_no = b.card_no where a.data_id = '{}' order by a.data_id desc  limit 1  ;".format(id)
         
         return self.query_data(command)
         

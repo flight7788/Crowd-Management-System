@@ -77,6 +77,11 @@ class SocketServer(Thread):
                     print('Server Receive # : {} from {}'.format(show_dict,address))
                     Logger().info('Server Receive # : {} from {}'.format(show_dict,address))
                     
+                    
+                    print(type(message['parameters']))
+                    print(len(message['parameters']))
+                    if(type(message['parameters'])  is str ):
+                      message['parameters']=dict()
                     message['parameters']['client_IP'] = address[0]
                     reply_msg = self.handler(message)
                     connection.send(json.dumps(reply_msg).encode())
