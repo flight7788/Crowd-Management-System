@@ -125,4 +125,9 @@ SOFTWARE.
 - Email - t110368035@ntut.org.tw
 - LAB - IEEE LAB, National Taipei University of Technology
 
+#### FRANK CHEN
+
+- Email - t110318092@ntut.org.tw
+- LAB - CNN LAB, National Taipei University of Technology
+
 [Back To The Top](#Crowd-Management-System)
